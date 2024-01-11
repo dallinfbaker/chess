@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -92,24 +94,17 @@ public class ChessBoard {
         }
     }
 
+    /**
+     * Compares 2 boards
+     * @return if boards are the same
+     */
     @Override
     public boolean equals(Object o) {
         if (o.getClass() != ChessBoard.class) { return false; }
         ChessBoard board = (ChessBoard) o;
-
-//        ChessPiece.PieceType piece1;
-//        ChessPiece.PieceType piece2;
-//        ChessGame.TeamColor color1;
-//        ChessGame.TeamColor color2;
-
-        for (int i = 1; i < 9; ++i) {
-            for (int j = 1; j < 9; ++j) {
-//                piece1 = this.board[i][j].getPieceType();
-//                color1 = this.board[i][j].getTeamColor();
-//                piece2 = board.board[i][j].getPieceType();
-//                color2 = board.board[i][j].getTeamColor();
-
-                if (this.board[i][j] == board.board[i][j]) { continue; }
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (Objects.equals(this.board[i][j], board.board[i][j])) { continue; }
                 else { return false;}
             }
         }
