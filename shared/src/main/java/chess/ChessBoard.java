@@ -24,6 +24,14 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) { this.board[position.getRow()-1][position.getColumn()-1] = piece; }
 
     /**
+     * move a chess piece on the chessboard
+     */
+    public void movePiece(ChessPosition startPosition, ChessPosition endPosition, ChessPiece piece) {
+        this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
+        this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+    }
+
+    /**
      * Gets a chess piece on the chessboard
      *
      * @param position The position to get the piece from
@@ -31,6 +39,11 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) { return this.board[position.getRow()-1][position.getColumn()-1]; }
+    public ChessPiece getPiece(int row, int col) {
+//        if (0 >= row || row >= 7 || 0 >= col || col >= 7) { return null; }
+        return this.board[row][col];
+    }
+    public ChessPiece getPiece(ChessPosition position, int row, int col) { return this.board[position.getRow()-1+row][position.getColumn()-1+col]; }
 
     /**
      * Returns the proper piece for the location on the board
