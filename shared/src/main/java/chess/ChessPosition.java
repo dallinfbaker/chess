@@ -8,36 +8,42 @@ package chess;
  */
 public class ChessPosition {
 
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
 
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;
-//        return this;
     }
 
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
      */
-    public int getRow() {
-//        if (0 < this.row & this.row < 9) {
-//            return this.row;
-//        }
-        return this.row;
-    }
+    public int getRow() { return this.row; }
 
     /**
      * @return which column this position is in
      * 1 codes for the left row
      */
-    public int getColumn() {
-//        if (0 < this.col & this.col < 9) {
-//            return this.col;
-//        }
-        return this.col;
+    public int getColumn() { return this.col; }
+
+     /**
+     * Compares 2 positions
+     * @return if positions are the same
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != ChessPosition.class) { return false; }
+        ChessPosition pos = (ChessPosition) o;
+        return this.row == pos.row & this.col == pos.col;
     }
+
+    /**
+     * @return Hash of position
+     */
+    @Override
+    public int hashCode() { return this.row * 8 + this.col; }
 
 }
 
