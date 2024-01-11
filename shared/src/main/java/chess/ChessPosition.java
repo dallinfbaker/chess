@@ -8,7 +8,13 @@ package chess;
  */
 public class ChessPosition {
 
+    private int row;
+    private int col;
+
     public ChessPosition(int row, int col) {
+        this.row = row;
+        this.col = col;
+//        return this;
     }
 
     /**
@@ -16,7 +22,10 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        throw new RuntimeException("Not implemented");
+//        if (0 < this.row & this.row < 9) {
+//            return this.row;
+//        }
+        return this.row;
     }
 
     /**
@@ -24,6 +33,12 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        throw new RuntimeException("Not implemented");
+//        if (0 < this.col & this.col < 9) {
+//            return this.col;
+//        }
+        return this.col;
     }
+
 }
+
+
