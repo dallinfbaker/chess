@@ -10,8 +10,8 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor color;
-    private ChessPiece.PieceType type;
+    private final ChessGame.TeamColor color;
+    private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
@@ -56,8 +56,7 @@ public class ChessPiece {
     }
 
     /**
-     * Compares 2 pieces
-     * @return if pieces are the same
+     * @return if 2 pieces are the same
      */
     @Override
     public boolean equals(Object o) {

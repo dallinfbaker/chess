@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private ChessPiece[][] board;
+    private final ChessPiece[][] board;
     public ChessBoard() {
         board = new ChessPiece[8][8];
     }
@@ -21,9 +21,7 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    public void addPiece(ChessPosition position, ChessPiece piece) {
-        this.board[position.getRow()-1][position.getColumn()-1] = piece;
-    }
+    public void addPiece(ChessPosition position, ChessPiece piece) { this.board[position.getRow()-1][position.getColumn()-1] = piece; }
 
     /**
      * Gets a chess piece on the chessboard
@@ -32,25 +30,12 @@ public class ChessBoard {
      * @return Either the piece at the position, or null if no piece is at that
      * position
      */
-    public ChessPiece getPiece(ChessPosition position) {
-        return this.board[position.getRow()-1][position.getColumn()-1];
-    }
-
-    /**
-     * Sets every element in the board to null
-     * */
-    private void clearBoard() {
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                this.board[i][j] = null;
-            }
-        }
-    }
+    public ChessPiece getPiece(ChessPosition position) { return this.board[position.getRow()-1][position.getColumn()-1]; }
 
     /**
      * Returns the proper piece for the location on the board
      * */
-    private ChessPiece.PieceType getStartingPiece(int row, int col, ChessGame.TeamColor color) {
+    private ChessPiece.PieceType getStartingPiece(int row, int col) {
         switch(row) {
             case 1,8:
                 switch (col) {
@@ -77,7 +62,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-//        this.clearBoard();
         ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         ChessPiece.PieceType type;
         ChessPiece piece;
@@ -85,7 +69,7 @@ public class ChessBoard {
         for (int i = 1; i < 9; ++i) {
             if (i == 3) { color = ChessGame.TeamColor.BLACK;}
             for (int j = 1; j < 9; ++j) {
-                type = getStartingPiece(i,j,color);
+                type = getStartingPiece(i,j);
                 if (type != null) { piece = new ChessPiece(color, type); }
                 else { piece = null; }
                 pos = new ChessPosition(i,j);
@@ -95,8 +79,7 @@ public class ChessBoard {
     }
 
     /**
-     * Compares 2 boards
-     * @return if boards are the same
+     * @return if 2 boards are the same
      */
     @Override
     public boolean equals(Object o) {
@@ -104,8 +87,7 @@ public class ChessBoard {
         ChessBoard board = (ChessBoard) o;
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
-                if (Objects.equals(this.board[i][j], board.board[i][j])) { continue; }
-                else { return false;}
+                if (!Objects.equals(this.board[i][j], board.board[i][j])) { return false; }
             }
         }
         return true;
