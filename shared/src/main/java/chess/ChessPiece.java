@@ -55,6 +55,10 @@ public class ChessPiece {
         throw new RuntimeException("Not implemented");
     }
 
+    /**
+     * Compares 2 pieces
+     * @return if pieces are the same
+     */
     @Override
     public boolean equals(Object o) {
         if (o.getClass() != ChessPiece.class) { return false; }
