@@ -147,7 +147,7 @@ public class ChessPiece {
                 }
             }
             cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() + 1);
-            if (cur.getColumn() < 8) {
+            if (cur.getColumn() < 9) {
                 if (this.board.getPiece(cur) != null) {
                     if (this.board.getPiece(cur).getTeamColor() != this.color) {
                         this.addMove(cur);
@@ -155,7 +155,7 @@ public class ChessPiece {
                 }
             }
             cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() - 1);
-            if (cur.getColumn() > 1) {
+            if (cur.getColumn() > 0) {
                 if (this.board.getPiece(cur) != null) {
                     if (this.board.getPiece(cur).getTeamColor() != this.color) {
                         this.addMove(cur);
