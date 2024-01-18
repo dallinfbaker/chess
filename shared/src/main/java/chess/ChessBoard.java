@@ -26,7 +26,9 @@ public class ChessBoard {
     /**
      * move a chess piece on the chessboard
      */
-    public void movePiece(ChessPosition startPosition, ChessPosition endPosition, ChessPiece piece) {
+    public void movePiece(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
+        ChessPiece piece = this.getPiece(startPosition);
         this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
         this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
     }
@@ -84,6 +86,18 @@ public class ChessBoard {
                 addPiece(pos,piece);
             }
         }
+    }
+
+    public ChessBoard copyBoard() {
+        ChessBoard copy = new ChessBoard();
+        ChessPosition cur;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                cur = new ChessPosition(i,j);
+                copy.addPiece(cur, this.getPiece(cur));
+            }
+        }
+        return copy;
     }
 
     /**
