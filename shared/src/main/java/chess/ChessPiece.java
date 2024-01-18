@@ -55,7 +55,7 @@ public class ChessPiece {
         ChessMove move = new ChessMove(this.position, position, promotion);
         this.moves.add(move);
     }
-    private boolean CheckPosition(int row, int column) {
+    private boolean checkPosition(int row, int column) {
         if ((row > 8 || row < 1) || (column > 8 || column < 1)) { return true; }
         ChessPosition cur = new ChessPosition(row, column);
         if (this.board.getPiece(cur) == null) {
@@ -75,31 +75,26 @@ public class ChessPiece {
      * Calculate all positions a chess piece can move to
      */
     private void kingMoves() {
-        CheckPosition(this.position.getRow() + 1, this.position.getColumn() + 1);
-        CheckPosition(this.position.getRow() + 1, this.position.getColumn());
-        CheckPosition(this.position.getRow() + 1, this.position.getColumn() - 1);
-        CheckPosition(this.position.getRow(), this.position.getColumn() + 1);
-        CheckPosition(this.position.getRow(), this.position.getColumn() - 1);
-        CheckPosition(this.position.getRow() - 1, this.position.getColumn() + 1);
-        CheckPosition(this.position.getRow() - 1, this.position.getColumn());
-        CheckPosition(this.position.getRow() - 1, this.position.getColumn() - 1);
+        checkPosition(this.position.getRow() + 1, this.position.getColumn() + 1);
+        checkPosition(this.position.getRow() + 1, this.position.getColumn());
+        checkPosition(this.position.getRow() + 1, this.position.getColumn() - 1);
+        checkPosition(this.position.getRow(), this.position.getColumn() + 1);
+        checkPosition(this.position.getRow(), this.position.getColumn() - 1);
+        checkPosition(this.position.getRow() - 1, this.position.getColumn() + 1);
+        checkPosition(this.position.getRow() - 1, this.position.getColumn());
+        checkPosition(this.position.getRow() - 1, this.position.getColumn() - 1);
     }
     private void queenMoves() {
         this.bishopMoves();
         this.rookMoves();
     }
     private void bishopMoves() {
-        for (int i = 1; i < 9 - this.position.getRow(); ++i) {
-            if (CheckPosition(this.position.getRow() + i, this.position.getColumn() + i)) break;
-        }
-        for (int i = 1; i < this.position.getRow(); ++i) {
-            if (CheckPosition(this.position.getRow() + i, this.position.getColumn() - i)) break;
-        }
-        for (int i = 1; i < 9 - this.position.getColumn(); ++i) {
-            if (CheckPosition(this.position.getRow() - i, this.position.getColumn() + i)) break;
-        }
-        for (int i = 1; i < this.position.getColumn(); ++i) {
-            if (CheckPosition(this.position.getRow() - i, this.position.getColumn() - i)) break;
+        boolean north = false, south = false, east = false, west = false;
+        for (int i = 1; i < 9; ++i) {
+            if (!north) north = checkPosition(this.position.getRow() + i, this.position.getColumn() + i);
+            if (!south) south = checkPosition(this.position.getRow() + i, this.position.getColumn() - i);
+            if (!east) east = checkPosition(this.position.getRow() - i, this.position.getColumn() + i);
+            if (!west) west = checkPosition(this.position.getRow() - i, this.position.getColumn() - i);
         }
     }
     private void knightMoves() {
@@ -108,23 +103,23 @@ public class ChessPiece {
         KnightSet(i, j);
     }
     private void KnightSet(int i, int j) {
-        CheckPosition(this.position.getRow() + j, this.position.getColumn() + i);
-        CheckPosition(this.position.getRow() + j, this.position.getColumn() - i);
-        CheckPosition(this.position.getRow() - j, this.position.getColumn() + i);
-        CheckPosition(this.position.getRow() - j, this.position.getColumn() - i);
+        checkPosition(this.position.getRow() + j, this.position.getColumn() + i);
+        checkPosition(this.position.getRow() + j, this.position.getColumn() - i);
+        checkPosition(this.position.getRow() - j, this.position.getColumn() + i);
+        checkPosition(this.position.getRow() - j, this.position.getColumn() - i);
     }
     private void rookMoves() {
         for (int i = this.position.getRow() + 1; i < 9; ++i) {
-            if (CheckPosition(i, this.position.getColumn())) break;
+            if (checkPosition(i, this.position.getColumn())) break;
         }
         for (int i = this.position.getRow() - 1; i > 0; --i) {
-            if (CheckPosition(i, this.position.getColumn())) break;
+            if (checkPosition(i, this.position.getColumn())) break;
         }
         for (int i = this.position.getColumn() + 1; i < 9; ++i) {
-             if (CheckPosition(this.position.getRow(), i)) break;
+             if (checkPosition(this.position.getRow(), i)) break;
         }
         for (int i = this.position.getColumn() - 1; i > 0; --i) {
-            if (CheckPosition(this.position.getRow(), i)) break;
+            if (checkPosition(this.position.getRow(), i)) break;
         }
     }
     private void pawnPromotions() {
@@ -152,15 +147,19 @@ public class ChessPiece {
                 }
             }
             cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() + 1);
-            if (this.board.getPiece(cur) != null) {
-                if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                    this.addMove(cur);
+            if (cur.getColumn() < 8) {
+                if (this.board.getPiece(cur) != null) {
+                    if (this.board.getPiece(cur).getTeamColor() != this.color) {
+                        this.addMove(cur);
+                    }
                 }
             }
             cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() - 1);
-            if (this.board.getPiece(cur) != null) {
-                if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                    this.addMove(cur);
+            if (cur.getColumn() > 1) {
+                if (this.board.getPiece(cur) != null) {
+                    if (this.board.getPiece(cur).getTeamColor() != this.color) {
+                        this.addMove(cur);
+                    }
                 }
             }
             if (this.position.getRow() == endRow - direction) pawnPromotions();
