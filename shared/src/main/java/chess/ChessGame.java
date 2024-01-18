@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -78,6 +79,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
+        if (kingPosition == null) return false;
         return isCheckPosition(kingPosition, teamColor);
     }
     private ChessPosition getKingPosition(TeamColor color) {
@@ -97,7 +99,6 @@ public class ChessGame {
     }
     private boolean isCheckPosition(ChessPosition pos, TeamColor color) {
         TeamColor enemyColor = color == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
-        boolean isCheck = false;
         ChessPiece piece;
         ChessPosition cur;
         Collection<ChessMove> moves;
@@ -109,15 +110,15 @@ public class ChessGame {
                     if (piece.getTeamColor() == enemyColor) {
                         moves = piece.pieceMoves(this.board, cur);
                         for (ChessMove move : moves) {
-                            if (move.getEndPosition() == pos) {
-                                return isCheck;
+                            if (Objects.equals(move.getEndPosition(), pos)) {
+                                return true;
                             }
                         }
                     }
                 }
             }
         }
-        return isCheck;
+        return false;
     }
     /**
      * Determines if the given team is in checkmate
@@ -128,10 +129,14 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
         if (kingPosition == null) return false;
+        ChessBoard temp = this.board.copyBoard();
         boolean isMate = isCheckPosition(kingPosition, teamColor);
-        for (ChessMove move : this.board.getPiece(kingPosition).pieceMoves(this.board, kingPosition)) {
+        Collection<ChessMove> moves = this.board.getPiece(kingPosition).pieceMoves(this.board, kingPosition);
+        for (ChessMove move : moves) {
             if (!isMate) break;
+            this.board.movePiece(move);
             isMate = isCheckPosition(move.getEndPosition(), teamColor);
+            this.board = temp;
         }
         return isMate;
     }
