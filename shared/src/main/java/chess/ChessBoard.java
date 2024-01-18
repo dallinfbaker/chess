@@ -39,8 +39,6 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) { return this.board[position.getRow()-1][position.getColumn()-1]; }
-    public ChessPiece getPiece(int row, int col) { return this.board[row][col]; }
-    public ChessPiece getPiece(ChessPosition position, int row, int col) { return this.board[position.getRow()-1+row][position.getColumn()-1+col]; }
 
     /**
      * Returns the proper piece for the location on the board
