@@ -139,7 +139,6 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPosition = getKingPosition(teamColor);
         if (kingPosition == null) return false;
-        ChessBoard temp = this.board.copyBoard();
         boolean isMate = isCheckPosition(kingPosition, teamColor);
         Collection<ChessMove> moves = this.board.getPiece(kingPosition).pieceMoves(this.board, kingPosition);
         for (ChessMove move : moves) {
