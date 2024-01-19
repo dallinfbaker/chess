@@ -11,7 +11,7 @@ import java.util.*;
 public class ChessPiece {
 
     private final ChessGame.TeamColor color;
-    private final ChessPiece.PieceType type;
+    private ChessPiece.PieceType type;
     private ChessPosition position;
     private ChessBoard board;
     private Collection<ChessMove> moves;
@@ -47,6 +47,7 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return this.type;
     }
+    public void setPieceType(PieceType type) { if (type != null) this.type = type; }
     private void addMove(ChessPosition position) {
         ChessMove move = new ChessMove(this.position, position, null);
         this.moves.add(move);

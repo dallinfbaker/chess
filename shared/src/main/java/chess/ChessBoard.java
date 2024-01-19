@@ -29,6 +29,7 @@ public class ChessBoard {
     public void movePiece(ChessMove move) {
         ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
         ChessPiece piece = this.getPiece(startPosition);
+        piece.setPieceType(move.getPromotionPiece());
         this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
         this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
     }

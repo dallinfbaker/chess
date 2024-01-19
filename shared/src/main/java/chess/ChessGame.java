@@ -15,7 +15,7 @@ public class ChessGame {
     TeamColor turnColor;
     public ChessGame() {
         board = new ChessBoard();
-        turnColor = TeamColor.WHITE;
+        setTeamTurn(TeamColor.WHITE);
     }
 
     /**
@@ -47,7 +47,12 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = this.board.getPiece(startPosition);
-        if (piece != null) return piece.pieceMoves(this.board, startPosition);
+        if (piece != null) {
+            Collection<ChessMove> moves = piece.pieceMoves(this.board, startPosition);
+            this.setTeamTurn(piece.getTeamColor());
+            moves.removeIf(move -> !isValidMove(move));
+            return moves;
+        }
         else return null;
     }
 
@@ -58,17 +63,22 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard tempBoard = this.board.copyBoard();
-        ChessPiece movePiece = this.board.getPiece(move.getStartPosition());
-        if (movePiece == null) throw new InvalidMoveException();
-        if (movePiece.getTeamColor() != this.turnColor) throw new InvalidMoveException();
-        if (!movePiece.pieceMoves(this.board, move.getStartPosition()).contains(move)) throw new InvalidMoveException();
-        this.board.movePiece(move);
-        if (isInCheck(this.turnColor)) {
-            this.board = tempBoard;
-            throw new InvalidMoveException();
-        }
+        if (isValidMove(move)) this.board.movePiece(move);
+        else throw new InvalidMoveException();
         this.setTeamTurn(this.turnColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
+    }
+
+    private boolean isValidMove(ChessMove move) {
+        ChessPiece movePiece = this.board.getPiece(move.getStartPosition());
+        if (movePiece == null) return false;
+        else if (movePiece.getTeamColor() != this.turnColor) return false;
+        else if (!movePiece.pieceMoves(this.board, move.getStartPosition()).contains(move)) return false;
+        ChessBoard tempBoard = this.board.copyBoard();
+        boolean valid = true;
+        this.board.movePiece(move);
+        if (isInCheck(this.turnColor)) valid = false;
+        this.board = tempBoard;
+        return valid;
     }
 
     /**
@@ -134,9 +144,7 @@ public class ChessGame {
         Collection<ChessMove> moves = this.board.getPiece(kingPosition).pieceMoves(this.board, kingPosition);
         for (ChessMove move : moves) {
             if (!isMate) break;
-            this.board.movePiece(move);
-            isMate = isCheckPosition(move.getEndPosition(), teamColor);
-            this.board = temp;
+            isMate = !isValidMove(move);
         }
         return isMate;
     }
