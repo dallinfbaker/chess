@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -11,9 +12,20 @@ import java.util.Objects;
 public class ChessBoard {
 
     private final ChessPiece[][] board;
+    private ChessPiece whiteKing;
+    private ChessPiece blackKing;
+    private ChessPiece removedPiece;
     public ChessBoard() {
         board = new ChessPiece[8][8];
     }
+
+    public ChessPiece getKing(ChessGame.TeamColor color) {
+        return color == ChessGame.TeamColor.WHITE ? whiteKing : blackKing;
+    }
+
+//    public ChessPiece getWhiteKing() { return whiteKing; }
+//
+//    public ChessPiece getBlackKing() { return blackKing; }
 
     /**
      * Adds a chess piece to the chessboard
@@ -21,7 +33,16 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    public void addPiece(ChessPosition position, ChessPiece piece) { this.board[position.getRow()-1][position.getColumn()-1] = piece; }
+    public void addPiece(ChessPosition position, ChessPiece piece) {
+        this.board[position.getRow()-1][position.getColumn()-1] = piece;
+        if (piece != null) {
+            piece.setPosition(position);
+            if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) whiteKing = piece;
+                else blackKing = piece;
+            }
+        }
+    }
 
     /**
      * move a chess piece on the chessboard
@@ -30,8 +51,23 @@ public class ChessBoard {
         ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
         ChessPiece piece = this.getPiece(startPosition);
         piece.setPieceType(move.getPromotionPiece());
+        this.removedPiece = this.board[endPosition.getRow()-1][endPosition.getColumn()-1];
         this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
         this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+        piece.setPosition(endPosition);
+        piece.increaseMoveCount();
+    }
+    public void undoMove(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
+        ChessPiece piece = this.getPiece(endPosition);
+        if (move.getPromotionPiece() != null) piece.setPieceType(ChessPiece.PieceType.PAWN);
+        this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = piece;
+        this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = this.removedPiece;
+        piece.setPosition(startPosition);
+        this.removedPiece = null;
+        piece.decreaseMoveCount();
+
+
     }
 
     /**
@@ -42,10 +78,11 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) { return this.board[position.getRow()-1][position.getColumn()-1]; }
+    public ChessPiece getPiece(int row, int col) { return this.board[row - 1][col - 1]; }
 
-    /**
-     * Returns the proper piece for the location on the board
-     * */
+        /**
+         * Returns the proper piece for the location on the board
+         * */
     private ChessPiece.PieceType getStartingPiece(int row, int col) {
         switch(row) {
             case 1,8:

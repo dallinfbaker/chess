@@ -15,10 +15,12 @@ public class ChessPiece {
     private ChessPosition position;
     private ChessBoard board;
     private Collection<ChessMove> moves;
+    private int moveCount;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
         this.type = type;
+        this.moveCount = 0;
         this.moves = null;
     }
 
@@ -32,6 +34,13 @@ public class ChessPiece {
         KNIGHT,
         ROOK,
         PAWN
+    }
+
+    public void setPosition(ChessPosition position) {
+        this.position = position;
+    }
+    public ChessPosition getPosition() {
+        return this.position;
     }
 
     /**
@@ -170,9 +179,10 @@ public class ChessPiece {
     /**
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) { return pieceMoves(board); }
+    public Collection<ChessMove> pieceMoves(ChessBoard board) {
         this.board = board;
-        this.position = myPosition;
+//        this.position = myPosition;
         this.moves = new HashSet<>();
         switch(this.type) {
             case KING:
@@ -196,6 +206,9 @@ public class ChessPiece {
         }
         return this.moves;
     }
+
+    public void increaseMoveCount() { this.moveCount++; }
+    public void decreaseMoveCount() { this.moveCount--; }
 
     /**
      * @return if 2 pieces are the same
