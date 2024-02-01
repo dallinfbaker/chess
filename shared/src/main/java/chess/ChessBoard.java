@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -15,17 +14,15 @@ public class ChessBoard {
     private ChessPiece whiteKing;
     private ChessPiece blackKing;
     private ChessPiece removedPiece;
+    private Collection<ChessPiece> enPassantVulnerable;
     public ChessBoard() {
         board = new ChessPiece[8][8];
+        enPassantVulnerable = new HashSet<>();
     }
 
     public ChessPiece getKing(ChessGame.TeamColor color) {
         return color == ChessGame.TeamColor.WHITE ? whiteKing : blackKing;
     }
-
-//    public ChessPiece getWhiteKing() { return whiteKing; }
-//
-//    public ChessPiece getBlackKing() { return blackKing; }
 
     /**
      * Adds a chess piece to the chessboard
@@ -48,26 +45,64 @@ public class ChessBoard {
      * move a chess piece on the chessboard
      */
     public void movePiece(ChessMove move) {
-        ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
-        ChessPiece piece = this.getPiece(startPosition);
-        piece.setPieceType(move.getPromotionPiece());
-        this.removedPiece = this.board[endPosition.getRow()-1][endPosition.getColumn()-1];
-        this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
-        this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
-        piece.setPosition(endPosition);
-        piece.increaseMoveCount();
+        if (move.getCastle()) { moveCaste(move); }
+        else {
+            ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
+            ChessPiece piece = this.getPiece(startPosition);
+            piece.setPieceType(move.getPromotionPiece());
+            this.removedPiece = this.board[endPosition.getRow() - 1][endPosition.getColumn() - 1];
+            this.board[endPosition.getRow() - 1][endPosition.getColumn() - 1] = piece;
+            this.board[startPosition.getRow() - 1][startPosition.getColumn() - 1] = null;
+            piece.setPosition(endPosition);
+            piece.increaseMoveCount();
+            if (move.getEnPassant()) {
+                this.removedPiece = move.getOther();
+                this.board[removedPiece.getPosition().getRow() - 1][removedPiece.getPosition().getColumn() - 1] = null;
+            }
+        }
     }
     public void undoMove(ChessMove move) {
-        ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
-        ChessPiece piece = this.getPiece(endPosition);
-        if (move.getPromotionPiece() != null) piece.setPieceType(ChessPiece.PieceType.PAWN);
-        this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = piece;
-        this.board[endPosition.getRow()-1][endPosition.getColumn()-1] = this.removedPiece;
-        piece.setPosition(startPosition);
-        this.removedPiece = null;
-        piece.decreaseMoveCount();
-
-
+        if (move.getCastle()) {
+            undoMoveCastle(move);
+        }
+        else {
+            ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
+            ChessPiece piece = this.getPiece(endPosition);
+            if (move.getPromotionPiece() != null) piece.setPieceType(ChessPiece.PieceType.PAWN);
+            this.board[startPosition.getRow() - 1][startPosition.getColumn() - 1] = piece;
+            this.board[endPosition.getRow() - 1][endPosition.getColumn() - 1] = this.removedPiece;
+            piece.setPosition(startPosition);
+            this.removedPiece = null;
+            piece.decreaseMoveCount();
+        }
+    }
+    private void moveCaste(ChessMove move) {
+        ChessPiece king = move.getKing();
+        ChessPiece rook = move.getOther();
+        ChessPosition kingStart = move.getStartPosition();
+        ChessPosition kingEnd = move.getEndPosition();
+        ChessPosition rookStart = move.getOtherStartPosition();
+        ChessPosition rookEnd = move.getStartPosition();
+        this.board[kingStart.getRow()-1][kingStart.getColumn()-1] = null;
+        this.board[rookStart.getRow()-1][rookStart.getColumn()-1] = null;
+        this.board[kingEnd.getRow()-1][kingEnd.getColumn()-1] = king;
+        this.board[rookEnd.getRow()-1][rookEnd.getColumn()-1] = rook;
+        king.increaseMoveCount();
+        rook.increaseMoveCount();
+    }
+    private void undoMoveCastle(ChessMove move) {
+        ChessPiece king = move.getKing();
+        ChessPiece rook = move.getOther();
+        ChessPosition kingStart = move.getStartPosition();
+        ChessPosition kingEnd = move.getEndPosition();
+        ChessPosition rookStart = move.getOtherStartPosition();
+        ChessPosition rookEnd = move.getStartPosition();
+        this.board[kingEnd.getRow()-1][kingEnd.getColumn()-1] = null;
+        this.board[rookEnd.getRow()-1][rookEnd.getColumn()-1] = null;
+        this.board[kingStart.getRow()-1][kingStart.getColumn()-1] = king;
+        this.board[rookStart.getRow()-1][rookStart.getColumn()-1] = rook;
+        king.decreaseMoveCount();
+        rook.decreaseMoveCount();
     }
 
     /**

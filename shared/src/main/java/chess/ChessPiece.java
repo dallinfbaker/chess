@@ -16,12 +16,14 @@ public class ChessPiece {
     private ChessBoard board;
     private Collection<ChessMove> moves;
     private int moveCount;
+    private boolean enPassantVulnerable;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
         this.type = type;
         this.moveCount = 0;
         this.moves = null;
+        this.enPassantVulnerable = false;
     }
 
     /**
@@ -61,8 +63,23 @@ public class ChessPiece {
         ChessMove move = new ChessMove(this.position, position, null);
         this.moves.add(move);
     }
+
     private void addMove(ChessPosition position, PieceType promotion) {
         ChessMove move = new ChessMove(this.position, position, promotion);
+        this.moves.add(move);
+    }
+    private void addMoveEnPassant(ChessPosition position, ChessPiece other) {
+        ChessMove move = new ChessMove(this.position, position, true, other);
+        this.moves.add(move);
+    }
+    private void addMoveCastle(ChessPiece king, ChessPiece rook) {
+        ChessPosition rookStart = rook.getPosition();
+        ChessPosition kingStart = king.getPosition();
+        ChessPosition rookEnd = rookStart.getColumn() < kingStart.getColumn() ?
+                new ChessPosition(rookStart.getRow(), 4) : new ChessPosition(rookStart.getRow(), 6);
+        ChessPosition kingEnd = rookStart.getColumn() < kingStart.getColumn() ?
+                new ChessPosition(rookStart.getRow(), 3) : new ChessPosition(rookStart.getRow(), 7);
+        ChessMove move = new ChessMove(rookEnd, kingEnd, true, king, rook);
         this.moves.add(move);
     }
     private boolean checkPosition(int row, int column) {
@@ -93,6 +110,7 @@ public class ChessPiece {
         checkPosition(this.position.getRow() - 1, this.position.getColumn() + 1);
         checkPosition(this.position.getRow() - 1, this.position.getColumn());
         checkPosition(this.position.getRow() - 1, this.position.getColumn() - 1);
+        this.castleMove();
     }
     private void queenMoves() {
         this.bishopMoves();
@@ -131,6 +149,48 @@ public class ChessPiece {
         for (int i = this.position.getColumn() - 1; i > 0; --i) {
             if (checkPosition(this.position.getRow(), i)) break;
         }
+        this.castleMove();
+    }
+    private ChessPiece spaceToPiece(int colDir) {
+        ChessPosition cur = new ChessPosition(this.position.getRow(), this.position.getColumn());
+//        ChessPiece piece;
+        while (cur.getColumn() > 1 && cur.getColumn() < 8) {
+//            piece = this.board.getPiece(cur);
+            if (this.board.getPiece(cur) == null || this.board.getPiece(cur) == this) {
+                cur = new ChessPosition(cur.getRow(), cur.getColumn() + colDir);
+            }
+            else break;
+        }
+        return this.board.getPiece(cur);
+    }
+    private void castleMove() {
+        if (this.moveCount == 0) {
+            if (this.type == PieceType.ROOK) {
+                int direction = this.position.getColumn() == 1 ? 1 : -1;
+                ChessPiece king = spaceToPiece(direction);
+                if (king != null) {
+                    if (king == this.board.getKing(this.color)) {
+                        if (king.getMoveCount() == 0) {
+                            this.addMoveCastle(king, this);
+                        }
+                    }
+                }
+            }
+            else if (this.type == PieceType.KING) {
+                ChessPiece rook1 = spaceToPiece(1);
+                ChessPiece rook2 = spaceToPiece(-1);
+                if (rook1 != null) {
+                    if (rook1.getMoveCount() == 0 && rook1.getPieceType() == PieceType.ROOK) {
+                        this.addMoveCastle(this, rook1);
+                    }
+                }
+                if (rook2 != null) {
+                    if (rook2.getMoveCount() == 0 && rook2.getPieceType() == PieceType.ROOK) {
+                        this.addMoveCastle(this, rook2);
+                    }
+                }
+            }
+        }
     }
     private void pawnPromotions() {
         PieceType[] pieces = new PieceType[]{PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT, PieceType.QUEEN};
@@ -142,39 +202,60 @@ public class ChessPiece {
             }
         }
     }
-    private void pawnMoves() {
-        int direction = this.color == ChessGame.TeamColor.WHITE ? 1 : -1;
-        int endRow = this.color == ChessGame.TeamColor.WHITE ? 8 : 1;
+    private void pawnForward(int direction) {
         int StartRow = this.color == ChessGame.TeamColor.WHITE ? 2 : 7;
-        ChessPosition cur;
-        if (this.position.getRow() * direction < endRow * direction) {
-            cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn());
-            if (this.board.getPiece(cur) == null) {
+        ChessPosition cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn());
+        if (this.board.getPiece(cur) == null) {
+            this.addMove(cur);
+            cur = new ChessPosition(this.position.getRow() + direction * 2, this.position.getColumn());
+            if (this.position.getRow() == StartRow && board.getPiece(cur) == null) {
                 this.addMove(cur);
-                cur = new ChessPosition(this.position.getRow() + direction * 2, this.position.getColumn());
-                if (this.position.getRow() == StartRow && board.getPiece(cur) == null) {
+                this.enPassantVulnerable = true;
+            }
+        }
+    }
+    private void pawnCapture(int direction) {
+        ChessPosition cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() + 1);
+        if (cur.getColumn() < 9) {
+            if (this.board.getPiece(cur) != null) {
+                if (this.board.getPiece(cur).getTeamColor() != this.color) {
                     this.addMove(cur);
                 }
             }
-            cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() + 1);
-            if (cur.getColumn() < 9) {
-                if (this.board.getPiece(cur) != null) {
-                    if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                        this.addMove(cur);
-                    }
+            this.pawnEnPassant(cur);
+        }
+        cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() - 1);
+        if (cur.getColumn() > 0) {
+            if (this.board.getPiece(cur) != null) {
+                if (this.board.getPiece(cur).getTeamColor() != this.color) {
+                    this.addMove(cur);
                 }
             }
-            cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() - 1);
-            if (cur.getColumn() > 0) {
-                if (this.board.getPiece(cur) != null) {
-                    if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                        this.addMove(cur);
-                    }
+            this.pawnEnPassant(cur);
+        }
+    }
+    private void pawnEnPassant(ChessPosition cur) {
+        int enPassantRow = this.color == ChessGame.TeamColor.WHITE ? 5 : 4;
+        if (this.position.getRow() == enPassantRow) {
+            ChessPiece other = board.getPiece(this.position.getRow(), cur.getColumn());
+            if (other != null) {
+                if (other.getPieceType() == PieceType.PAWN && other.getMoveCount() == 1 && other.getTeamColor() != this.getTeamColor()) {
+                    this.addMoveEnPassant(cur, other);
                 }
             }
+        }
+    }
+    private void pawnMoves() {
+        int direction = this.color == ChessGame.TeamColor.WHITE ? 1 : -1;
+        int endRow = this.color == ChessGame.TeamColor.WHITE ? 8 : 1;
+
+        if (this.position.getRow() * direction < endRow * direction) {
+            this.pawnForward(direction);
+            this.pawnCapture(direction);
             if (this.position.getRow() == endRow - direction) pawnPromotions();
         }
     }
+
 
     /**
      * @return Collection of valid moves
@@ -182,7 +263,6 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) { return pieceMoves(board); }
     public Collection<ChessMove> pieceMoves(ChessBoard board) {
         this.board = board;
-//        this.position = myPosition;
         this.moves = new HashSet<>();
         switch(this.type) {
             case KING:
@@ -207,6 +287,8 @@ public class ChessPiece {
         return this.moves;
     }
 
+    public boolean getEnPassantVulnerable() { return this.enPassantVulnerable; }
+    public int getMoveCount() { return this.moveCount; }
     public void increaseMoveCount() { this.moveCount++; }
     public void decreaseMoveCount() { this.moveCount--; }
 

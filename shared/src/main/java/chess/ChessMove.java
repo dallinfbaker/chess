@@ -13,25 +13,58 @@ public class ChessMove {
     private final ChessPosition start;
     private final ChessPosition end;
     private final ChessPiece.PieceType promotion;
+    private boolean enPassant = false;
+    private boolean castle = false;
+    private  ChessPiece other = null;
+    private ChessPiece king = null;
+    private ChessPosition otherStart = null;
+    private ChessPosition otherEnd = null;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
         start = startPosition;
         end = endPosition;
         promotion = promotionPiece;
     }
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition, boolean enPassant, ChessPiece other) {
+        start = startPosition;
+        end = endPosition;
+        promotion = null;
+        this.enPassant = enPassant;
+        this.other = other;
+    }
+    public ChessMove(ChessPosition rookEnd, ChessPosition kingEnd, boolean castle, ChessPiece king, ChessPiece rook) {
+        this.other = rook;
+        this.king = king;
+        start = king.getPosition();
+        end = kingEnd;
+        otherStart = rook.getPosition();
+        otherEnd = rookEnd;
+        promotion = null;
+        this.castle = castle;
+    }
 
     /**
      * @return ChessPosition of starting location
      */
-    public ChessPosition getStartPosition() {
-        return this.start;
-    }
-
+    public ChessPosition getStartPosition() { return this.start; }
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
         return this.end;
     }
+    public ChessPosition getOtherStartPosition() { return this.otherStart; }
+    /**
+     * @return ChessPosition of ending location
+     */
+    public ChessPosition getOtherEndPosition() {
+        return this.otherEnd;
+    }
+    public boolean getEnPassant() { return this.enPassant; }
+
+    public ChessPiece getOther() { return this.other; }
+    public ChessPiece getKing() { return this.king; }
+    public boolean getCastle() { return this.castle; }
+
 
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this
