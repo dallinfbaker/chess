@@ -153,9 +153,7 @@ public class ChessPiece {
     }
     private ChessPiece spaceToPiece(int colDir) {
         ChessPosition cur = new ChessPosition(this.position.getRow(), this.position.getColumn());
-//        ChessPiece piece;
         while (cur.getColumn() > 1 && cur.getColumn() < 8) {
-//            piece = this.board.getPiece(cur);
             if (this.board.getPiece(cur) == null || this.board.getPiece(cur) == this) {
                 cur = new ChessPosition(cur.getRow(), cur.getColumn() + colDir);
             }
@@ -168,7 +166,7 @@ public class ChessPiece {
             if (this.type == PieceType.ROOK) {
                 int direction = this.position.getColumn() == 1 ? 1 : -1;
                 ChessPiece king = spaceToPiece(direction);
-                if (king != null) {
+                if (king != null && king != this) {
                     if (king == this.board.getKing(this.color)) {
                         if (king.getMoveCount() == 0) {
                             this.addMoveCastle(king, this);
@@ -239,7 +237,7 @@ public class ChessPiece {
         if (this.position.getRow() == enPassantRow) {
             ChessPiece other = board.getPiece(this.position.getRow(), cur.getColumn());
             if (other != null) {
-                if (other.getPieceType() == PieceType.PAWN && other.getMoveCount() == 1 && other.getTeamColor() != this.getTeamColor()) {
+                if (other.getPieceType() == PieceType.PAWN && other.getEnPassantVulnerable() && other.getTeamColor() != this.getTeamColor()) {
                     this.addMoveEnPassant(cur, other);
                 }
             }
@@ -288,6 +286,7 @@ public class ChessPiece {
     }
 
     public boolean getEnPassantVulnerable() { return this.enPassantVulnerable; }
+    public void setEnPassantVulnerable(boolean enPassantVulnerable) { this.enPassantVulnerable = enPassantVulnerable; }
     public int getMoveCount() { return this.moveCount; }
     public void increaseMoveCount() { this.moveCount++; }
     public void decreaseMoveCount() { this.moveCount--; }

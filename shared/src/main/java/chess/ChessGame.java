@@ -1,9 +1,10 @@
 package chess;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.lang.Math;
+//import java.util.*Collection;
+//import java.util.HashMap;
+//import java.util.Map;
+//import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -16,6 +17,7 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor turnColor;
     private Map<TeamColor, Integer> pieceCounter;
+    private ChessPiece enPassantVulnerable = null;
     public ChessGame() {
         board = new ChessBoard();
         setTeamTurn(TeamColor.WHITE);
@@ -75,6 +77,13 @@ public class ChessGame {
             ChessPiece removed = this.board.getPiece(move.getEndPosition());
             if (removed != null) this.pieceCounter.put(removed.getTeamColor(), this.pieceCounter.get(removed.getTeamColor()) -1);
             this.board.movePiece(move);
+            if (enPassantVulnerable != null) {enPassantVulnerable.setEnPassantVulnerable(false);}
+            enPassantVulnerable = board.getPiece(move.getEndPosition());
+            if (enPassantVulnerable.getPieceType() == ChessPiece.PieceType.PAWN &&
+                    Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2) {
+                enPassantVulnerable.setEnPassantVulnerable(true);
+            }
+            else { enPassantVulnerable = null; }
         }
         else throw new InvalidMoveException();
         this.setTeamTurn(this.turnColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
