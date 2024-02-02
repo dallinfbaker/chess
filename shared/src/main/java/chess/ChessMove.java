@@ -14,11 +14,11 @@ public class ChessMove {
     private final ChessPosition end;
     private final ChessPiece.PieceType promotion;
     private boolean enPassant = false;
-    private boolean castle = false;
+//    private boolean castle;
     private  ChessPiece other = null;
-    private ChessPiece king = null;
-    private ChessPosition otherStart = null;
-    private ChessPosition otherEnd = null;
+//    private ChessPiece king = null;
+//    private ChessPosition otherStart = null;
+//    private ChessPosition otherEnd = null;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
         start = startPosition;
         end = endPosition;
@@ -31,16 +31,16 @@ public class ChessMove {
         this.enPassant = enPassant;
         this.other = other;
     }
-    public ChessMove(ChessPosition rookEnd, ChessPosition kingEnd, boolean castle, ChessPiece king, ChessPiece rook) {
-        this.other = rook;
-        this.king = king;
-        start = king.getPosition();
-        end = kingEnd;
-        otherStart = rook.getPosition();
-        otherEnd = rookEnd;
-        promotion = null;
-        this.castle = castle;
-    }
+//    public ChessMove(ChessPosition rookEnd, ChessPosition kingEnd, boolean castle, ChessPiece king, ChessPiece rook) {
+//        this.other = rook;
+//        this.king = king;
+//        start = king.getPosition();
+//        end = kingEnd;
+//        otherStart = rook.getPosition();
+//        otherEnd = rookEnd;
+//        promotion = null;
+//        this.castle = castle;
+//    }
 
     /**
      * @return ChessPosition of starting location
@@ -52,18 +52,16 @@ public class ChessMove {
     public ChessPosition getEndPosition() {
         return this.end;
     }
-    public ChessPosition getOtherStartPosition() { return this.otherStart; }
+//    public ChessPosition getOtherStartPosition() { return this.otherStart; }
     /**
      * @return ChessPosition of ending location
      */
-    public ChessPosition getOtherEndPosition() {
-        return this.otherEnd;
-    }
+//    public ChessPosition getOtherEndPosition() { return this.otherEnd; }
     public boolean getEnPassant() { return this.enPassant; }
 
     public ChessPiece getOther() { return this.other; }
-    public ChessPiece getKing() { return this.king; }
-    public boolean getCastle() { return this.castle; }
+//    public ChessPiece getKing() { return this.king; }
+//    public boolean getCastle() { return this.castle; }
 
 
     /**
@@ -89,6 +87,6 @@ public class ChessMove {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.start, this.end, this.promotion);
+        return Objects.hash(start, end, promotion);
     }
 }

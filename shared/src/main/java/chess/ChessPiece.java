@@ -64,6 +64,9 @@ public class ChessPiece {
         this.moves.add(move);
     }
 
+    /**
+     * add move of the correct type
+     */
     private void addMove(ChessPosition position, PieceType promotion) {
         ChessMove move = new ChessMove(this.position, position, promotion);
         this.moves.add(move);
@@ -73,13 +76,20 @@ public class ChessPiece {
         this.moves.add(move);
     }
     private void addMoveCastle(ChessPiece king, ChessPiece rook) {
-        ChessPosition rookStart = rook.getPosition();
-        ChessPosition kingStart = king.getPosition();
-        ChessPosition rookEnd = rookStart.getColumn() < kingStart.getColumn() ?
-                new ChessPosition(rookStart.getRow(), 4) : new ChessPosition(rookStart.getRow(), 6);
-        ChessPosition kingEnd = rookStart.getColumn() < kingStart.getColumn() ?
-                new ChessPosition(rookStart.getRow(), 3) : new ChessPosition(rookStart.getRow(), 7);
-        ChessMove move = new ChessMove(rookEnd, kingEnd, true, king, rook);
+        ChessPosition start = king.getPosition();
+        ChessPosition end = rook.getPosition().getColumn() == 1 ?
+                new ChessPosition(start.getRow(), 3) :new ChessPosition(start.getRow(), 7);
+        ChessPosition rookEnd = rook.getPosition().getColumn() == 1 ?
+                new ChessPosition(start.getRow(), 4) :new ChessPosition(start.getRow(), 6);
+
+//        ChessPosition rookStart = rook.getPosition();
+//        int row = rookStart.getRow(), col = rookStart.getColumn();
+//        ChessPosition rookEnd = col == 1 ?
+//                new ChessPosition(row, 4) : new ChessPosition(row, 6);
+//        ChessPosition kingEnd = col == 1 ?
+//                new ChessPosition(row, 3) : new ChessPosition(row, 7);
+        ChessMove move = new ChessMove(start, end, null);
+//        ChessMove move = new ChessMove(rookEnd, end, true, king, rook);
         this.moves.add(move);
     }
     private boolean checkPosition(int row, int column) {
@@ -111,6 +121,34 @@ public class ChessPiece {
         checkPosition(this.position.getRow() - 1, this.position.getColumn());
         checkPosition(this.position.getRow() - 1, this.position.getColumn() - 1);
         this.castleMove();
+    }
+    private ChessPiece spaceToPiece(int colDir) {
+        ChessPosition cur = new ChessPosition(this.position.getRow(), this.position.getColumn());
+        while (cur.getColumn() > 1 && cur.getColumn() < 8) {
+            if (this.board.getPiece(cur) == null || this.board.getPiece(cur) == this) {
+                cur = new ChessPosition(cur.getRow(), cur.getColumn() + colDir);
+            }
+            else break;
+        }
+        return this.board.getPiece(cur);
+    }
+    private void castleMove() {
+        if (this.moveCount == 0) {
+            if (this.type == PieceType.KING) {
+                ChessPiece rook1 = spaceToPiece(1);
+                ChessPiece rook2 = spaceToPiece(-1);
+                if (rook1 != null) {
+                    if (rook1.getMoveCount() == 0 && rook1.getPieceType() == PieceType.ROOK) {
+                        this.addMoveCastle(this, rook1);
+                    }
+                }
+                if (rook2 != null) {
+                    if (rook2.getMoveCount() == 0 && rook2.getPieceType() == PieceType.ROOK) {
+                        this.addMoveCastle(this, rook2);
+                    }
+                }
+            }
+        }
     }
     private void queenMoves() {
         this.bishopMoves();
@@ -149,45 +187,16 @@ public class ChessPiece {
         for (int i = this.position.getColumn() - 1; i > 0; --i) {
             if (checkPosition(this.position.getRow(), i)) break;
         }
-        this.castleMove();
+//        this.castleMove();
     }
-    private ChessPiece spaceToPiece(int colDir) {
-        ChessPosition cur = new ChessPosition(this.position.getRow(), this.position.getColumn());
-        while (cur.getColumn() > 1 && cur.getColumn() < 8) {
-            if (this.board.getPiece(cur) == null || this.board.getPiece(cur) == this) {
-                cur = new ChessPosition(cur.getRow(), cur.getColumn() + colDir);
-            }
-            else break;
-        }
-        return this.board.getPiece(cur);
-    }
-    private void castleMove() {
-        if (this.moveCount == 0) {
-            if (this.type == PieceType.ROOK) {
-                int direction = this.position.getColumn() == 1 ? 1 : -1;
-                ChessPiece king = spaceToPiece(direction);
-                if (king != null && king != this) {
-                    if (king == this.board.getKing(this.color)) {
-                        if (king.getMoveCount() == 0) {
-                            this.addMoveCastle(king, this);
-                        }
-                    }
-                }
-            }
-            else if (this.type == PieceType.KING) {
-                ChessPiece rook1 = spaceToPiece(1);
-                ChessPiece rook2 = spaceToPiece(-1);
-                if (rook1 != null) {
-                    if (rook1.getMoveCount() == 0 && rook1.getPieceType() == PieceType.ROOK) {
-                        this.addMoveCastle(this, rook1);
-                    }
-                }
-                if (rook2 != null) {
-                    if (rook2.getMoveCount() == 0 && rook2.getPieceType() == PieceType.ROOK) {
-                        this.addMoveCastle(this, rook2);
-                    }
-                }
-            }
+    private void pawnMoves() {
+        int direction = this.color == ChessGame.TeamColor.WHITE ? 1 : -1;
+        int endRow = this.color == ChessGame.TeamColor.WHITE ? 8 : 1;
+
+        if (this.position.getRow() * direction < endRow * direction) {
+            this.pawnForward(direction);
+            this.pawnCapture(direction);
+            if (this.position.getRow() == endRow - direction) pawnPromotions();
         }
     }
     private void pawnPromotions() {
@@ -241,16 +250,6 @@ public class ChessPiece {
                     this.addMoveEnPassant(cur, other);
                 }
             }
-        }
-    }
-    private void pawnMoves() {
-        int direction = this.color == ChessGame.TeamColor.WHITE ? 1 : -1;
-        int endRow = this.color == ChessGame.TeamColor.WHITE ? 8 : 1;
-
-        if (this.position.getRow() * direction < endRow * direction) {
-            this.pawnForward(direction);
-            this.pawnCapture(direction);
-            if (this.position.getRow() == endRow - direction) pawnPromotions();
         }
     }
 

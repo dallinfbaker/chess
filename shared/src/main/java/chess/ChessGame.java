@@ -77,7 +77,7 @@ public class ChessGame {
             ChessPiece removed = this.board.getPiece(move.getEndPosition());
             if (removed != null) this.pieceCounter.put(removed.getTeamColor(), this.pieceCounter.get(removed.getTeamColor()) -1);
             this.board.movePiece(move);
-            if (enPassantVulnerable != null) {enPassantVulnerable.setEnPassantVulnerable(false);}
+            if (enPassantVulnerable != null) { enPassantVulnerable.setEnPassantVulnerable(false); }
             enPassantVulnerable = board.getPiece(move.getEndPosition());
             if (enPassantVulnerable.getPieceType() == ChessPiece.PieceType.PAWN &&
                     Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2) {
@@ -94,7 +94,15 @@ public class ChessGame {
         if (movePiece == null) return false;
         else if (movePiece.getTeamColor() != this.turnColor) return false;
         else if (!movePiece.pieceMoves(this.board).contains(move)) return false;
-        else if (isInCheck(this.turnColor) && move.getCastle()) return false;
+        else if (movePiece.getPieceType() == ChessPiece.PieceType.KING &&
+                Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
+            int row = move.getStartPosition().getRow(),
+                    end = move.getEndPosition().getColumn(),
+                    direction = end == 7 ? 1 : -1;
+            for (int col = move.getStartPosition().getColumn(); col * direction <= end * direction; col += direction) {
+                if (isCheckPosition(new ChessPosition(row, col), this.turnColor)) return false;
+            }
+        }
         boolean valid = true;
         this.board.movePiece(move);
         if (isInCheck(this.turnColor)) valid = false;
