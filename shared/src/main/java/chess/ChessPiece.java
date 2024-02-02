@@ -79,17 +79,7 @@ public class ChessPiece {
         ChessPosition start = king.getPosition();
         ChessPosition end = rook.getPosition().getColumn() == 1 ?
                 new ChessPosition(start.getRow(), 3) :new ChessPosition(start.getRow(), 7);
-        ChessPosition rookEnd = rook.getPosition().getColumn() == 1 ?
-                new ChessPosition(start.getRow(), 4) :new ChessPosition(start.getRow(), 6);
-
-//        ChessPosition rookStart = rook.getPosition();
-//        int row = rookStart.getRow(), col = rookStart.getColumn();
-//        ChessPosition rookEnd = col == 1 ?
-//                new ChessPosition(row, 4) : new ChessPosition(row, 6);
-//        ChessPosition kingEnd = col == 1 ?
-//                new ChessPosition(row, 3) : new ChessPosition(row, 7);
         ChessMove move = new ChessMove(start, end, null);
-//        ChessMove move = new ChessMove(rookEnd, end, true, king, rook);
         this.moves.add(move);
     }
     private boolean checkPosition(int row, int column) {

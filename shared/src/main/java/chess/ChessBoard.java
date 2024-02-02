@@ -44,7 +44,7 @@ public class ChessBoard {
         ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
         ChessPiece piece = this.getPiece(startPosition);
         if (piece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(startPosition.getColumn() - endPosition.getColumn()) == 2) {
-            moveCastle(move, startPosition, endPosition, piece);
+            moveCastle(startPosition, endPosition, piece);
         }
         else {
             piece.setPieceType(move.getPromotionPiece());
@@ -63,7 +63,7 @@ public class ChessBoard {
         ChessPosition startPosition = move.getStartPosition(), endPosition = move.getEndPosition();
         ChessPiece piece = this.getPiece(endPosition);
         if (piece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(startPosition.getColumn() - endPosition.getColumn()) == 2) {
-            undoMoveCastle(move, startPosition, endPosition, piece);
+            undoMoveCastle(startPosition, endPosition, piece);
         }
         else {
             if (move.getPromotionPiece() != null) piece.setPieceType(ChessPiece.PieceType.PAWN);
@@ -74,7 +74,7 @@ public class ChessBoard {
             piece.decreaseMoveCount();
         }
     }
-    private void moveCastle(ChessMove move, ChessPosition kingStart, ChessPosition kingEnd, ChessPiece king) {
+    private void moveCastle(ChessPosition kingStart, ChessPosition kingEnd, ChessPiece king) {
         int row = kingStart.getRow();
         ChessPiece rook;
         ChessPosition rookStart, rookEnd;
@@ -95,7 +95,7 @@ public class ChessBoard {
         king.increaseMoveCount();
         rook.increaseMoveCount();
     }
-    private void undoMoveCastle(ChessMove move, ChessPosition kingStart, ChessPosition kingEnd, ChessPiece king) {
+    private void undoMoveCastle(ChessPosition kingStart, ChessPosition kingEnd, ChessPiece king) {
         int row = kingStart.getRow();
         ChessPiece rook;
         ChessPosition rookStart, rookEnd;
