@@ -1,10 +1,6 @@
 package chess;
 import java.util.*;
 import java.lang.Math;
-//import java.util.*Collection;
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
