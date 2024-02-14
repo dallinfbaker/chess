@@ -289,4 +289,17 @@ public class ChessPiece {
         ChessPiece piece = (ChessPiece) o;
         return this.color == piece.color & this.type == piece.type;
     }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "color=" + color +
+                ", type=" + type +
+                ", position=" + position +
+                ", board=" + board +
+                ", moves=" + moves +
+                ", moveCount=" + moveCount +
+                ", enPassantVulnerable=" + enPassantVulnerable +
+                '}';
+    }
 }

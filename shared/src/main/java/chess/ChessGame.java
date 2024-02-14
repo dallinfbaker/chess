@@ -187,4 +187,14 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() { return this.board; }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board.toString() +
+                ", turnColor=" + turnColor +
+                ", pieceCounter=" + pieceCounter +
+                ", enPassantVulnerable=" + enPassantVulnerable +
+                '}';
+    }
 }

@@ -201,4 +201,13 @@ public class ChessBoard {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "board=" + Arrays.toString(board) +
+                ", whiteKing=" + whiteKing +
+                ", blackKing=" + blackKing +
+                ", removedPiece=" + removedPiece +
+                '}';
+    }
 }
