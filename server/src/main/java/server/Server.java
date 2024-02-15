@@ -1,6 +1,9 @@
 package server;
 
 import DataAccess.DAOManager;
+import com.google.gson.Gson;
+import server.WebSocket.WebSocketHandler;
+import server.WebSocket.ResponseException;
 import spark.*;
 
 public class Server {
@@ -9,17 +12,15 @@ public class Server {
     private ClearHandler clearHandler = new ClearHandler(daoManager);
     private GameHandler gameHandler = new GameHandler(daoManager);
     private UserHandler userHandler = new UserHandler(daoManager);
-    private LogoutHandler logoutHandler = new LogoutHandler(daoManager);
-    private RegisterHandler registerHandler = new RegisterHandler(daoManager);
+    private WebSocketHandler webSocketHandler = new WebSocketHandler();
 
-    public Server(){}
+
+    public Server() {}
     public Server(DAOManager daoManager) {
         this.daoManager = daoManager;
         clearHandler = new ClearHandler(daoManager);
         gameHandler = new GameHandler(daoManager);
         userHandler = new UserHandler(daoManager);
-        logoutHandler = new LogoutHandler(daoManager);
-        registerHandler = new RegisterHandler(daoManager);
     }
 
     public int run(int desiredPort) {
@@ -27,7 +28,21 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/connect", webSocketHandler);
+
+        Spark.delete("/db", this::clearData);
+
+        Spark.post("/user", this::registerUser);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
+
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
+
+//        Spark.delete("/pet/:id", this::deletePet);
+
+        Spark.exception(ResponseException.class, this::exceptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -38,26 +53,44 @@ public class Server {
         Spark.awaitStop();
     }
 
-    public void clearData(){
+    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
+
+    private Object clearData(Request req, Response res) throws ResponseException{
         clearHandler.handle();
+        res.status(200);
+        return "";
     }
-    public void registerUser(){
+    public Object registerUser(Request req, Response res) throws ResponseException {
         userHandler.register();
+        res.status(200);
+        return "";
     }
-    public void login(){
+    public Object login(Request req, Response res) throws ResponseException {
         userHandler.login();
+        res.status(200);
+        return "";
     }
-    public void logout(){
+    public Object logout(Request req, Response res) throws ResponseException {
         userHandler.logout();
+        res.status(200);
+        return "";
     }
-    public void listGames(){
+    public Object listGames(Request req, Response res) throws ResponseException {
         gameHandler.listGames();
+        res.status(200);
+        return "";
     }
-    public void createGame(){
+    public Object createGame(Request req, Response res) throws ResponseException {
         gameHandler.createGame();
+        res.status(200);
+        return "";
     }
-    public void joinGame(){
+    public Object joinGame(Request req, Response res) throws ResponseException {
         gameHandler.joinGame();
+        res.status(200);
+        return "";
     }
 
 }
