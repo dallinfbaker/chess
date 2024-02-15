@@ -11,12 +11,12 @@ public class AuthDAO implements AuthDAOInterface {
     }
 
     @Override
-    public String createAuthToken(String username) {
+    public AuthData createAuthToken(String username) {
         String token = "";
         AuthData authData = new AuthData(token, username);
         auths.put(token, authData);
 
-        return token;
+        return authData;
     }
 
     @Override

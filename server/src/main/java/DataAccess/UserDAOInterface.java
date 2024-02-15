@@ -3,6 +3,7 @@ package DataAccess;
 public interface UserDAOInterface {
     UserData getUser(String username);
     void createUser(String username, String password, String email);
+    void createUser(UserData user);
     void updateUser(String username, String password, String email);
     void deleteUser(String username);
     void clearUsers();

@@ -22,6 +22,11 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
+    public void createUser(UserData user) {
+        users.put(user.getUsername(), user);
+    }
+
+    @Override
     public void updateUser(String username, String password, String email) {
         UserData userData = new UserData(username, password, email);
         users.replace(username, userData);
