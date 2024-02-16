@@ -1,5 +1,6 @@
 package DataAccess;
 import chess.ChessGame;
+import server.WebSocket.ResponseException;
 
 import java.util.*;
 
@@ -11,36 +12,40 @@ public class GameDAO implements GameDAOInterface {
         games = new HashMap<>();
     }
 
-    private int generateID(ChessGame game) {
-//        UUID uuidFromString = UUID.fromString(game.toString());
-        return game.hashCode();
+    private int generateID() {
+        return UUID.randomUUID().hashCode();
     }
 
-    public int createGameData(ChessGame game, String whiteUsername){
-        int gameID = game.hashCode();
-        GameData gameData = new GameData(gameID, game);
-        gameData.setWhiteUsername(whiteUsername);
-        games.put(gameID, gameData);
-        return gameID;
+    public int createGameData(String gameName) throws ResponseException {
+        int id = UUID.randomUUID().hashCode();
+        ChessGame game = new ChessGame();
+        GameData gameData = new GameData(id, game);
+        gameData.setGameName(gameName);
+        games.put(id, gameData);
+        return id;
     }
 
-    public GameData getGame(int gameID) {
+    public HashMap<Integer, GameData> getGames() throws ResponseException {
+        return games;
+    }
+
+    public GameData getGame(int gameID) throws ResponseException {
         return games.get(gameID);
     }
 
-    public void addGame(GameData game) {
-        games.put(generateID(game.getGame()), game);
+    public void addGame(GameData game) throws ResponseException {
+        games.put(generateID(), game);
     }
 
-    public void updateGame(int gameID, GameData game) {
+    public void updateGame(int gameID, GameData game) throws ResponseException {
         games.replace(gameID, game);
     }
 
-    public void deleteGame(int gameID) {
+    public void deleteGame(int gameID) throws ResponseException {
         games.remove(gameID);
     }
 
-    public void clearGames() {
+    public void clearGames() throws ResponseException {
         games = new HashMap<>();
     }
 }

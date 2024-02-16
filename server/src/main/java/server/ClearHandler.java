@@ -1,6 +1,7 @@
 package server;
 
 import DataAccess.DAOManager;
+import server.WebSocket.ResponseException;
 
 public class ClearHandler {
     private final DAOManager daoManager;
@@ -8,7 +9,7 @@ public class ClearHandler {
         this.daoManager = daoManager;
     }
 
-    public void handle() {
+    public void handle() throws ResponseException {
         daoManager.authDAO.clearAuth();
         daoManager.gameDAO.clearGames();
         daoManager.userDAO.clearUsers();

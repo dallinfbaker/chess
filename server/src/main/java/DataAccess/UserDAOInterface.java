@@ -1,16 +1,12 @@
 package DataAccess;
 
+import server.WebSocket.ResponseException;
+
 public interface UserDAOInterface {
-    UserData getUser(String username);
-    void createUser(String username, String password, String email);
-    void createUser(UserData user);
-    void updateUser(String username, String password, String email);
-    void deleteUser(String username);
-    void clearUsers();
-
-
-
-    String getPassword(String username);
-    String getEmail(String username);
-
+    UserData getUser(String username) throws ResponseException;
+    void createUser(String username, String password, String email) throws ResponseException;
+    void createUser(UserData user) throws ResponseException;
+    void updateUser(String username, String password, String email) throws ResponseException;
+    void deleteUser(String username) throws ResponseException;
+    void clearUsers() throws ResponseException;
 }
