@@ -17,12 +17,6 @@ public class Server {
 
 
     public Server() {}
-//    public Server(DAOManager daoManager) {
-//        this.daoManager = daoManager;
-//        clearHandler = new ClearHandler(daoManager);
-//        gameHandler = new GameHandler(daoManager);
-//        userHandler = new UserHandler(daoManager);
-//    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -108,9 +102,7 @@ public class Server {
         authHandler(req.headers("authorization"));
         try {
             HashMap<Integer, GameData> games = gameHandler.listGames();
-//            GameList list = new GameList(games);
             return new Gson().toJson(new GameList(games));
-//            return new Gson().toJson(games.values());
         } catch (ResponseException e) { throw e; }
         catch (Exception e) {
             throw new ResponseException(500, "Error: " + e.getMessage());
@@ -131,8 +123,6 @@ public class Server {
         try {
             GameData data = gameHandler.joinGame(req.body(), daoManager.authDAO.getAuth(req.headers("authorization")).getUsername());
             return "";
-//            if (Objects.isNull(data)) return "";
-//            else return "";
         } catch (ResponseException e) { throw e; }
         catch (Exception e) {
             throw new ResponseException(500, "Error: " + e.getMessage());
