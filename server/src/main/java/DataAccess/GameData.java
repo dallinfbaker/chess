@@ -3,23 +3,23 @@ package DataAccess;
 import chess.ChessGame;
 
 public class GameData {
-    private int GameID;
+    private int gameID;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
     private ChessGame game;
 
-    public GameData(int gameID) {
-        GameID = gameID;
+    public GameData(int id) {
+        gameID = id;
         game = new ChessGame();
     }
 
     public int getGameID() {
-        return GameID;
+        return gameID;
     }
 
-    public void setGameID(int gameID) {
-        GameID = gameID;
+    public void setGameID(int id) {
+        gameID = id;
     }
 
     public String getWhiteUsername() {

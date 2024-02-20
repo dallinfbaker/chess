@@ -19,7 +19,7 @@ public class GameDAO implements GameDAOInterface {
     }
 
     public int createGameData(String gameName) {
-        int id = Math.abs(UUID.randomUUID().hashCode());
+        int id = generateID();
         GameData gameData = new GameData(id);
         gameData.setGameName(gameName);
         games.put(id, gameData);

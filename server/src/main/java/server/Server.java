@@ -110,6 +110,7 @@ public class Server {
             HashMap<Integer, GameData> games = gameHandler.listGames();
 //            GameList list = new GameList(games);
             return new Gson().toJson(new GameList(games));
+//            return new Gson().toJson(games.values());
         } catch (ResponseException e) { throw e; }
         catch (Exception e) {
             throw new ResponseException(500, "Error: " + e.getMessage());
