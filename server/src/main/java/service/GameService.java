@@ -1,11 +1,9 @@
 package service;
-import chess.ChessGame;
 import DataAccess.*;
 import server.WebSocket.ResponseException;
 
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.UUID;
 
 public class GameService {
     private final GameDAO gameDAO;
@@ -13,7 +11,7 @@ public class GameService {
     public GameService(GameDAO gameDAO) {
         this.gameDAO = gameDAO;
     }
-    public int createGame(String name) throws ResponseException {
+    public int createGame(String name) {
         return gameDAO.createGameData(name);
     }
     public void joinGame(int gameID, String playerColor, String username) throws ResponseException {
@@ -30,7 +28,7 @@ public class GameService {
     public GameData watchGame(int gameID) throws ResponseException {
         return gameDAO.getGame(gameID);
     }
-    public HashMap<Integer, GameData> listGames() throws ResponseException {
+    public HashMap<Integer, GameData> listGames() {
         return gameDAO.getGames();
     }
 }

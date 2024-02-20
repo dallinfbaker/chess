@@ -1,5 +1,4 @@
 package DataAccess;
-import chess.ChessGame;
 import server.WebSocket.ResponseException;
 
 import java.util.*;
@@ -19,16 +18,15 @@ public class GameDAO implements GameDAOInterface {
         return id;
     }
 
-    public int createGameData(String gameName) throws ResponseException {
+    public int createGameData(String gameName) {
         int id = Math.abs(UUID.randomUUID().hashCode());
-//        int id = generateID();
         GameData gameData = new GameData(id);
         gameData.setGameName(gameName);
         games.put(id, gameData);
         return id;
     }
 
-    public HashMap<Integer, GameData> getGames() throws ResponseException {
+    public HashMap<Integer, GameData> getGames() {
         return games;
     }
 
@@ -37,19 +35,19 @@ public class GameDAO implements GameDAOInterface {
         return games.get(gameID);
     }
 
-    public void addGame(GameData game) throws ResponseException {
+    public void addGame(GameData game) {
         games.put(generateID(), game);
     }
 
-    public void updateGame(int gameID, GameData game) throws ResponseException {
+    public void updateGame(int gameID, GameData game) {
         games.replace(gameID, game);
     }
 
-    public void deleteGame(int gameID) throws ResponseException {
+    public void deleteGame(int gameID) {
         games.remove(gameID);
     }
 
-    public void clearGames() throws ResponseException {
+    public void clearGames() {
         games = new HashMap<>();
     }
 }

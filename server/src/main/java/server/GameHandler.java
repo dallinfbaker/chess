@@ -40,7 +40,6 @@ public class GameHandler {
     }
 
     public HashMap<Integer, GameData> listGames() throws ResponseException {
-//        HashMap<Integer, GameData> games = gameService.listGames();
         return gameService.listGames();
     }
 }

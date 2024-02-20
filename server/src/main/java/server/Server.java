@@ -3,17 +3,16 @@ package server;
 import DataAccess.*;
 import com.google.gson.*;
 import server.WebSocket.*;
-import service.GameService;
 import spark.*;
 
 import java.util.*;
 
 public class Server {
 
-    private DAOManager daoManager = new DAOManager();
-    private ClearHandler clearHandler = new ClearHandler(daoManager);
-    private GameHandler gameHandler = new GameHandler(daoManager.gameDAO);
-    private UserHandler userHandler = new UserHandler(daoManager);
+    private final DAOManager daoManager = new DAOManager();
+    private final ClearHandler clearHandler = new ClearHandler(daoManager);
+    private final GameHandler gameHandler = new GameHandler(daoManager.gameDAO);
+    private final UserHandler userHandler = new UserHandler(daoManager);
     private final WebSocketHandler webSocketHandler = new WebSocketHandler();
 
 
@@ -109,8 +108,8 @@ public class Server {
         authHandler(req.headers("authorization"));
         try {
             HashMap<Integer, GameData> games = gameHandler.listGames();
-            GameList list = new GameList(games);
-            return new Gson().toJson(list);
+//            GameList list = new GameList(games);
+            return new Gson().toJson(new GameList(games));
         } catch (ResponseException e) { throw e; }
         catch (Exception e) {
             throw new ResponseException(500, "Error: " + e.getMessage());
@@ -130,8 +129,9 @@ public class Server {
         authHandler(req.headers("authorization"));
         try {
             GameData data = gameHandler.joinGame(req.body(), daoManager.authDAO.getAuth(req.headers("authorization")).getUsername());
-            if (Objects.isNull(data)) return "";
-            else return "";
+            return "";
+//            if (Objects.isNull(data)) return "";
+//            else return "";
         } catch (ResponseException e) { throw e; }
         catch (Exception e) {
             throw new ResponseException(500, "Error: " + e.getMessage());

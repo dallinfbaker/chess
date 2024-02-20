@@ -3,7 +3,6 @@ package DataAccess;
 import server.WebSocket.ResponseException;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class UserDAO implements UserDAOInterface {
 
@@ -14,7 +13,7 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
-    public UserData getUser(String username) throws ResponseException {
+    public UserData getUser(String username) {
         return users.get(username);
     }
 
@@ -32,18 +31,18 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
-    public void updateUser(String username, String password, String email) throws ResponseException {
+    public void updateUser(String username, String password, String email) {
         UserData userData = new UserData(username, password, email);
         users.replace(username, userData);
     }
 
     @Override
-    public void deleteUser(String username) throws ResponseException {
+    public void deleteUser(String username) {
         users.remove(username);
     }
 
     @Override
-    public void clearUsers() throws ResponseException {
+    public void clearUsers() {
         users = new HashMap<>();
     }
 }
