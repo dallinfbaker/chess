@@ -1,10 +1,9 @@
 package server;
 
-import DataAccess.DAOManager;
 import DataAccess.GameDAO;
 import DataAccess.GameData;
-import chess.ChessGame;
-import server.WebSocket.Connection;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import server.WebSocket.ResponseException;
 import service.GameService;
 
@@ -22,12 +21,26 @@ public class GameHandler {
         gameId.put("gameID", id);
         return gameId;
     }
-    public void joinGame() throws ResponseException {
+    public GameData joinGame(String body, String username) throws ResponseException {
+        JsonObject jsonObject = new Gson().fromJson(body, JsonObject.class);
+        try {
+            int gameID = jsonObject.get("gameID").getAsInt();
+            try {
+                String playerColor = jsonObject.get("playerColor").getAsString();
+                gameService.joinGame(gameID, playerColor, username);
+            } catch (NullPointerException e) { return gameService.watchGame(gameID); }
+        } catch (NullPointerException e) {
+            throw new ResponseException(400, "Error: bad request");
+        }
 
+        String playerColor = jsonObject.get("playerColor").getAsString();
+        int gameID = jsonObject.get("gameID").getAsInt();
+        gameService.joinGame(gameID, playerColor, username);
+        return null;
     }
 
     public HashMap<Integer, GameData> listGames() throws ResponseException {
+//        HashMap<Integer, GameData> games = gameService.listGames();
         return gameService.listGames();
-
     }
 }

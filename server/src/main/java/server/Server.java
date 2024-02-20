@@ -1,16 +1,8 @@
 package server;
 
-import DataAccess.AuthData;
-import DataAccess.DAOManager;
-import DataAccess.GameData;
-import DataAccess.UserData;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-import server.WebSocket.Connection;
-import server.WebSocket.WebSocketHandler;
-import server.WebSocket.ResponseException;
+import DataAccess.*;
+import com.google.gson.*;
+import server.WebSocket.*;
 import service.GameService;
 import spark.*;
 
@@ -72,45 +64,77 @@ public class Server {
     }
 
     private Object clearData(Request req, Response res) throws ResponseException {
-        clearHandler.handle();
-        res.status(200);
-        return "";
+        try {
+            clearHandler.handle();
+            return "";
+        } catch (ResponseException e) { throw e; }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object registerUser(Request req, Response res) throws ResponseException {
-        var user = new Gson().fromJson(req.body(), UserData.class);
-        AuthData auth = userHandler.register(user);
-//        res.status(200);
-        return new Gson().toJson(auth);
+        try {
+            var user = new Gson().fromJson(req.body(), UserData.class);
+            AuthData auth = userHandler.register(user);
+            return new Gson().toJson(auth);
+        } catch (ResponseException e) { throw e; }
+        catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object login(Request req, Response res) throws ResponseException {
-        var user = new Gson().fromJson(req.body(), UserData.class);
-        AuthData auth = userHandler.login(user);
-//        res.status(200);
-        return new Gson().toJson(auth);
+        try {
+            var user = new Gson().fromJson(req.body(), UserData.class);
+            AuthData auth = userHandler.login(user);
+            res.status(200);
+            return new Gson().toJson(auth);
+        } catch (ResponseException e) { throw e; }
+        catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object logout(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
-        userHandler.logout(req.headers("authorization"));
-//        res.status(200);
-        return "";
+        try {
+            userHandler.logout(req.headers("authorization"));
+            return "";
+        } catch (ResponseException e) { throw e; }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object listGames(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
-        HashMap<Integer, GameData> games = gameHandler.listGames();
-//        res.status(200);
-        return new Gson().toJson(games);
+        try {
+            HashMap<Integer, GameData> games = gameHandler.listGames();
+            GameList list = new GameList(games);
+            return new Gson().toJson(list);
+        } catch (ResponseException e) { throw e; }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object createGame(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
-        Map<String, Integer> id = gameHandler.createGame(new Gson().fromJson(req.body(), GameData.class).getGameName());
-//        res.status(200);
-        return new Gson().toJson(id);
+        try {
+            Map<String, Integer> id = gameHandler.createGame(new Gson().fromJson(req.body(), GameData.class).getGameName());
+            return new Gson().toJson(id);
+        } catch (ResponseException e) { throw e; }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
     public Object joinGame(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
-        gameHandler.joinGame();
-//        res.status(200);
-        return "";
+        try {
+            GameData data = gameHandler.joinGame(req.body(), daoManager.authDAO.getAuth(req.headers("authorization")).getUsername());
+            if (Objects.isNull(data)) return "";
+            else return "";
+        } catch (ResponseException e) { throw e; }
+        catch (Exception e) {
+            throw new ResponseException(500, "Error: " + e.getMessage());
+        }
     }
-
 }

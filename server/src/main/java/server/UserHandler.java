@@ -6,6 +6,8 @@ import DataAccess.UserData;
 import server.WebSocket.ResponseException;
 import service.UserService;
 
+import java.util.Objects;
+
 public class UserHandler {
     private final UserService userService;
     public UserHandler(DAOManager daoManager) {
@@ -13,6 +15,11 @@ public class UserHandler {
     }
 
     public AuthData register(UserData user) throws ResponseException {
+        if (
+            Objects.isNull(user.getUsername()) ||
+            Objects.isNull(user.getEmail()) ||
+            Objects.isNull(user.getPassword())
+        ) throw new ResponseException(400, "Error: bad request");
         return userService.register(user);
     }
     public AuthData login(UserData user) throws ResponseException {

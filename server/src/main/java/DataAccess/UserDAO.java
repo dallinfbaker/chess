@@ -3,6 +3,7 @@ package DataAccess;
 import server.WebSocket.ResponseException;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class UserDAO implements UserDAOInterface {
 
@@ -19,21 +20,14 @@ public class UserDAO implements UserDAOInterface {
 
     @Override
     public void createUser(String username, String password, String email) throws ResponseException {
-        if (users.containsKey(username)) throw new ResponseException(403, "already taken");
+        if (users.containsKey(username)) throw new ResponseException(403, "Error: already taken");
         UserData userData = new UserData(username, password, email);
         users.put(username, userData);
-//        try {
-//        UserData userData = new UserData(username, password, email);
-//        users.put(username, userData);
-//        }
-//        catch (ResponseException e) {
-//            throw new ResponseException(403, e.getMessage());
-//        }
     }
 
     @Override
     public void createUser(UserData user) throws ResponseException {
-        if (users.containsKey(user.getUsername())) throw new ResponseException(403, "already taken");
+        if (users.containsKey(user.getUsername())) throw new ResponseException(403, "Error: already taken");
         users.put(user.getUsername(), user);
     }
 
@@ -52,5 +46,4 @@ public class UserDAO implements UserDAOInterface {
     public void clearUsers() throws ResponseException {
         users = new HashMap<>();
     }
-
 }
