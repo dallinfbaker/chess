@@ -1,18 +1,20 @@
 package service;
+
 import DataAccess.*;
 import server.WebSocket.ResponseException;
-
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class GameService {
     private final GameDAO gameDAO;
 
-    public GameService(GameDAO gameDAO) {
-        this.gameDAO = gameDAO;
-    }
-    public int createGame(String name) {
-        return gameDAO.createGameData(name);
+    public GameService(GameDAO gameDAO) { this.gameDAO = gameDAO; }
+    public Map<String, Integer> createGame(String name) {
+        int id = gameDAO.createGameData(name);
+        Map<String, Integer> gameId = new HashMap<>();
+        gameId.put("gameID", id);
+        return gameId;
     }
     public void joinGame(int gameID, String playerColor, String username) throws ResponseException {
         GameData gameData = gameDAO.getGame(gameID);
@@ -25,10 +27,6 @@ public class GameService {
             else if (!Objects.equals(gameData.getBlackUsername(), username)) throw new ResponseException(403,"Error: already taken");
         }
     }
-    public GameData watchGame(int gameID) throws ResponseException {
-        return gameDAO.getGame(gameID);
-    }
-    public HashMap<Integer, GameData> listGames() {
-        return gameDAO.getGames();
-    }
+    public void watchGame(int gameID) throws ResponseException { gameDAO.getGame(gameID); }
+    public HashMap<Integer, GameData> listGames() { return gameDAO.getGames(); }
 }

@@ -3,7 +3,7 @@ package DataAccess;
 import chess.ChessGame;
 
 public class GameData {
-    private int gameID;
+    private final int gameID;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
@@ -14,13 +14,7 @@ public class GameData {
         game = new ChessGame();
     }
 
-    public int getGameID() {
-        return gameID;
-    }
-
-    public void setGameID(int id) {
-        gameID = id;
-    }
+    public int getGameID() { return gameID; }
 
     public String getWhiteUsername() {
         return whiteUsername;
@@ -46,11 +40,7 @@ public class GameData {
         this.gameName = gameName;
     }
 
-    public ChessGame getGame() {
-        return game;
-    }
+    public ChessGame getGame() { return game; }
 
-    public void setGame(ChessGame game) {
-        this.game = game;
-    }
+    public void setGame(ChessGame game) { this.game = game; }
 }
