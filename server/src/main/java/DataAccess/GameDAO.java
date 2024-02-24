@@ -26,28 +26,18 @@ public class GameDAO implements GameDAOInterface {
         return id;
     }
 
-    public HashMap<Integer, GameData> getGames() {
-        return games;
-    }
+    public HashMap<Integer, GameData> getGames() { return games; }
 
     public GameData getGame(int gameID) throws ResponseException {
         if (!games.containsKey(gameID)) throw new ResponseException(400, "Error: bad request");
         return games.get(gameID);
     }
 
-    public void addGame(GameData game) {
-        games.put(generateID(), game);
-    }
+    public void addGame(GameData game) { games.put(game.getGameID(), game); }
 
-    public void updateGame(int gameID, GameData game) {
-        games.replace(gameID, game);
-    }
+    public void updateGame(int gameID, GameData game) { games.replace(gameID, game); }
 
-    public void deleteGame(int gameID) {
-        games.remove(gameID);
-    }
+    public void deleteGame(int gameID) { games.remove(gameID); }
 
-    public void clearGames() {
-        games = new HashMap<>();
-    }
+    public void clearGames() { games = new HashMap<>(); }
 }

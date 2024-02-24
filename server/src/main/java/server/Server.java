@@ -54,17 +54,14 @@ public class Server {
     private void exceptionHandler(ResponseException ex, Request req, Response res) {
         res.status(ex.StatusCode());
         String str = "message: " + ex.getMessage();
-        res.body(new Gson().toJson(new ExceptionHandler(str)));
+        res.body(new Gson().toJson(new ExceptionRecord(str)));
     }
-
     private void authHandler(String auth) throws ResponseException { authService.checkAuth(auth); }
-
     private Object clearHandler(Request req, Response res) throws ResponseException {
         try {
             clearService.clear();
             return "";
-        } catch (ResponseException e) { throw e; }
-        catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
+        } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
     public Object registerUserHandler(Request req, Response res) throws ResponseException {
         try {
@@ -107,7 +104,9 @@ public class Server {
         try {
             Map<String, Integer> id = gameService.createGame(new Gson().fromJson(req.body(), GameData.class).getGameName());
             return new Gson().toJson(id);
-        } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
+        } catch (ResponseException e) { throw e; }
+        catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
+        catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
     public Object joinGameHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
@@ -123,6 +122,7 @@ public class Server {
             } catch (NullPointerException e) { throw new ResponseException(400, "Error: bad request"); }
             return "";
         } catch (ResponseException e) { throw e; }
+        catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
 }

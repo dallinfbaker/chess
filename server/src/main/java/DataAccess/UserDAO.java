@@ -37,12 +37,8 @@ public class UserDAO implements UserDAOInterface {
     }
 
     @Override
-    public void deleteUser(String username) {
-        users.remove(username);
-    }
+    public void deleteUser(String username) { users.remove(username); }
 
     @Override
-    public void clearUsers() {
-        users = new HashMap<>();
-    }
+    public void clearUsers() { users = new HashMap<>(); }
 }
