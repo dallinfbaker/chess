@@ -1,7 +1,5 @@
 package DataAccess;
 
-import server.WebSocket.ResponseException;
-
 import java.util.HashMap;
 import java.util.UUID;
 

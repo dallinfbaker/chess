@@ -1,7 +1,6 @@
 package service;
 
 import DataAccess.DAOManager;
-import server.WebSocket.ResponseException;
 
 public class ClearService {
     private final DAOManager daoManager;
