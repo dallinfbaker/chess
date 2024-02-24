@@ -26,18 +26,19 @@ public class UserDAO implements UserDAOInterface {
 
     @Override
     public void createUser(UserData user) throws ResponseException {
-        if (users.containsKey(user.getUsername())) throw new ResponseException(403, "Error: already taken");
-        users.put(user.getUsername(), user);
+        if (users.containsKey(user.username())) throw new ResponseException(403, "Error: already taken");
+        users.put(user.username(), user);
     }
 
+/*
     @Override
     public void updateUser(String username, String password, String email) {
         UserData userData = new UserData(username, password, email);
         users.replace(username, userData);
     }
-
-    @Override
     public void deleteUser(String username) { users.remove(username); }
+*/
+
 
     @Override
     public void clearUsers() { users = new HashMap<>(); }

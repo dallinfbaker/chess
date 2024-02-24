@@ -67,9 +67,9 @@ public class Server {
         try {
             var user = new Gson().fromJson(req.body(), UserData.class);
             if (
-                Objects.isNull(user.getUsername()) ||
-                Objects.isNull(user.getEmail()) ||
-                Objects.isNull(user.getPassword())
+                Objects.isNull(user.username()) ||
+                Objects.isNull(user.email()) ||
+                Objects.isNull(user.password())
             ) throw new ResponseException(400, "Error: bad request");
             return new Gson().toJson(userService.register(user));
         } catch (ResponseException e) { throw e; }

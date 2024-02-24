@@ -35,9 +35,9 @@ public class GameDAO implements GameDAOInterface {
 
     public void addGame(GameData game) { games.put(game.getGameID(), game); }
 
-    public void updateGame(int gameID, GameData game) { games.replace(gameID, game); }
-
-    public void deleteGame(int gameID) { games.remove(gameID); }
+//    public void updateGame(int gameID, GameData game) { games.replace(gameID, game); }
+//
+//    public void deleteGame(int gameID) { games.remove(gameID); }
 
     public void clearGames() { games = new HashMap<>(); }
 }

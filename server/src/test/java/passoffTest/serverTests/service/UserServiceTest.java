@@ -48,9 +48,9 @@ class UserServiceTest {
 
     @Test
     void logoutPos() {
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("myUser", "myPassword", "myEmail")).getAuthToken()));
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("whiteUser", "whitePassword", "whiteEmail")).getAuthToken()));
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("blackUser", "blackPassword", "blackEmail")).getAuthToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserData("myUser", "myPassword", "myEmail")).authToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserData("whiteUser", "whitePassword", "whiteEmail")).authToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserData("blackUser", "blackPassword", "blackEmail")).authToken()));
     }
     @Test
     void logoutNeg() {
