@@ -174,7 +174,9 @@ public class ChessBoard {
         }
     }
 
-    public ChessBoard copyBoard() {
+    @Override
+    public ChessBoard clone() throws CloneNotSupportedException {
+        super.clone();
         ChessBoard copy = new ChessBoard();
         ChessPosition cur;
         for (int i = 1; i < 9; i++) {
