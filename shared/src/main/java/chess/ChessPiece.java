@@ -155,10 +155,10 @@ public class ChessPiece {
     }
     private void knightMoves() {
         int i = 1, j = 2;
-        KnightSet(j, i);
-        KnightSet(i, j);
+        knightSet(j, i);
+        knightSet(i, j);
     }
-    private void KnightSet(int i, int j) {
+    private void knightSet(int i, int j) {
         checkPosition(this.position.getRow() + j, this.position.getColumn() + i);
         checkPosition(this.position.getRow() + j, this.position.getColumn() - i);
         checkPosition(this.position.getRow() - j, this.position.getColumn() + i);
@@ -177,7 +177,6 @@ public class ChessPiece {
         for (int i = this.position.getColumn() - 1; i > 0; --i) {
             if (checkPosition(this.position.getRow(), i)) break;
         }
-//        this.castleMove();
     }
     private void pawnMoves() {
         int direction = this.color == ChessGame.TeamColor.WHITE ? 1 : -1;
@@ -214,23 +213,22 @@ public class ChessPiece {
     private void pawnCapture(int direction) {
         ChessPosition cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() + 1);
         if (cur.getColumn() < 9) {
-            if (this.board.getPiece(cur) != null) {
-                if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                    this.addMove(cur);
-                }
-            }
-            this.pawnEnPassant(cur);
+            pawnCaptureCheck(cur);
         }
         cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn() - 1);
         if (cur.getColumn() > 0) {
-            if (this.board.getPiece(cur) != null) {
-                if (this.board.getPiece(cur).getTeamColor() != this.color) {
-                    this.addMove(cur);
-                }
-            }
-            this.pawnEnPassant(cur);
+            pawnCaptureCheck(cur);
         }
     }
+    private void pawnCaptureCheck(ChessPosition cur) {
+        if (this.board.getPiece(cur) != null) {
+            if (this.board.getPiece(cur).getTeamColor() != this.color) {
+                this.addMove(cur);
+            }
+        }
+        this.pawnEnPassant(cur);
+    }
+
     private void pawnEnPassant(ChessPosition cur) {
         int enPassantRow = this.color == ChessGame.TeamColor.WHITE ? 5 : 4;
         if (this.position.getRow() == enPassantRow) {
