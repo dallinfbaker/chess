@@ -199,12 +199,12 @@ public class ChessPiece {
         }
     }
     private void pawnForward(int direction) {
-        int StartRow = this.color == ChessGame.TeamColor.WHITE ? 2 : 7;
+        int startRow = this.color == ChessGame.TeamColor.WHITE ? 2 : 7;
         ChessPosition cur = new ChessPosition(this.position.getRow() + direction, this.position.getColumn());
         if (this.board.getPiece(cur) == null) {
             this.addMove(cur);
             cur = new ChessPosition(this.position.getRow() + direction * 2, this.position.getColumn());
-            if (this.position.getRow() == StartRow && board.getPiece(cur) == null) {
+            if (this.position.getRow() == startRow && board.getPiece(cur) == null) {
                 this.addMove(cur);
                 this.enPassantVulnerable = true;
             }
