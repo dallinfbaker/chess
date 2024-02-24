@@ -8,5 +8,5 @@ public class ResponseException extends Exception {
         this.statusCode = statusCode;
     }
 
-    public int StatusCode() { return statusCode; }
+    public int statusCode() { return statusCode; }
 }
