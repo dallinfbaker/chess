@@ -8,14 +8,10 @@ public class UserDAO implements UserDAOInterface {
 
     private HashMap<String, UserData> users;
 
-    public UserDAO() {
-        this.users = new HashMap<>();
-    }
+    public UserDAO() { this.users = new HashMap<>(); }
 
     @Override
-    public UserData getUser(String username) {
-        return users.get(username);
-    }
+    public UserData getUser(String username) { return users.get(username); }
 
     @Override
     public void createUser(String username, String password, String email) throws ResponseException {
@@ -29,16 +25,6 @@ public class UserDAO implements UserDAOInterface {
         if (users.containsKey(user.username())) throw new ResponseException(403, "Error: already taken");
         users.put(user.username(), user);
     }
-
-/*
-    @Override
-    public void updateUser(String username, String password, String email) {
-        UserData userData = new UserData(username, password, email);
-        users.replace(username, userData);
-    }
-    public void deleteUser(String username) { users.remove(username); }
-*/
-
 
     @Override
     public void clearUsers() { users = new HashMap<>(); }
