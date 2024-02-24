@@ -1,8 +1,7 @@
 package DataAccess;
 
-//import chess.ChessGame;
-import server.WebSocket.ResponseException;
 
+import server.WebSocket.ResponseException;
 import java.util.HashMap;
 
 public interface GameDAOInterface {

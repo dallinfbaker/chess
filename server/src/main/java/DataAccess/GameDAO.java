@@ -1,15 +1,13 @@
 package DataAccess;
-import server.WebSocket.ResponseException;
 
+import server.WebSocket.ResponseException;
 import java.util.*;
 
 public class GameDAO implements GameDAOInterface {
 
     private HashMap<Integer, GameData> games;
 
-    public GameDAO(){
-        games = new HashMap<>();
-    }
+    public GameDAO(){ games = new HashMap<>(); }
 
     private int generateID() {
         int id = UUID.randomUUID().hashCode();

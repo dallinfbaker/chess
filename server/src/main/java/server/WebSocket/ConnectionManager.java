@@ -1,8 +1,6 @@
 package server.WebSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-//import webSocketMessages.Notification;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +29,6 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.visitorName);
         }

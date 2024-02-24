@@ -3,12 +3,8 @@ package server;
 import DataAccess.*;
 import com.google.gson.*;
 import server.WebSocket.*;
-import service.AuthService;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import service.*;
 import spark.*;
-
 import java.util.*;
 
 public class Server {
