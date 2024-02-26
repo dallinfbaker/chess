@@ -1,15 +1,18 @@
 package DataAccess;
 
 
-import model.GameData;
+import model.GameDataRecord;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
+import java.util.Objects;
 
 public interface GameDAOInterface {
 
-    HashMap<Integer, GameData> getGames() throws ResponseException;
-    GameData getGame(int gameID) throws ResponseException;
+    HashMap<Integer, GameDataRecord> getGames() throws ResponseException;
+    GameDataRecord getGame(int gameID) throws ResponseException;
     int createGameData(String gameName) throws ResponseException;
+    void setWhiteUsername(int gameID, String username) throws DataAccessException;
+    void setBlackUsername(int gameID, String username) throws DataAccessException;
     void clearGames() throws ResponseException;
 
 }

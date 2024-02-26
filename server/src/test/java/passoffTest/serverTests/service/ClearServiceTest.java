@@ -1,7 +1,8 @@
 package passoffTest.serverTests.service;
 
 import DataAccess.DAOManager;
-import model.GameData;
+import chess.ChessGame;
+import model.GameDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.WebSocket.ResponseException;
@@ -18,14 +19,17 @@ class ClearServiceTest {
         DAOManager dao = new DAOManager();
         service = new ClearService(dao);
 
-        GameData data = new GameData(1234);
+        GameDataRecord data = new GameDataRecord(1234, "", "", "", new ChessGame());
         dao.gameDAO.addGame(data);
-        data = new GameData(4321);
+        data = new GameDataRecord(4321, "", "", "", new ChessGame());
         dao.gameDAO.addGame(data);
-        data = new GameData(2341);
+        data = new GameDataRecord(2341, "", "", "", new ChessGame());
         dao.gameDAO.addGame(data);
-        data = new GameData(3412);
-        data.setWhiteUsername("dd");
+        data = new GameDataRecord(3412, "", "", "", new ChessGame());
+        try {
+            dao.gameDAO.setWhiteUsername(3412, "white");
+            dao.gameDAO.setBlackUsername(3412, "black");
+        } catch (Exception ignored) {}
         dao.gameDAO.addGame(data);
 
         dao.authDAO.addAuth("1234","myUser");

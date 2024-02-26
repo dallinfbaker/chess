@@ -1,27 +1,27 @@
 package DataAccess;
 
-import model.AuthData;
+import model.AuthDataRecord;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class AuthDAO implements AuthDAOInterface {
 
-    private HashMap<String, AuthData> auths;
+    private HashMap<String, AuthDataRecord> auths;
 
     public AuthDAO() { auths = new HashMap<>(); }
 
     @Override
-    public AuthData createAuthToken(String username) {
+    public AuthDataRecord createAuthToken(String username) {
         String token = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(token, username);
+        AuthDataRecord authData = new AuthDataRecord(token, username);
         auths.put(token, authData);
 
         return authData;
     }
 
     @Override
-    public AuthData getAuth(String token) { return auths.get(token); }
+    public AuthDataRecord getAuth(String token) { return auths.get(token); }
     @Override
     public boolean validAuth(String auth) { return auths.containsKey(auth); }
 
@@ -32,7 +32,7 @@ public class AuthDAO implements AuthDAOInterface {
     public void clearAuth() { auths = new HashMap<>(); }
 
     public void addAuth(String token, String user) {
-        AuthData authData = new AuthData(token, user);
+        AuthDataRecord authData = new AuthDataRecord(token, user);
         auths.put(token, authData);
     }
 }

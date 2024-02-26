@@ -65,7 +65,7 @@ public class Server {
 
     public Object registerUserHandler(Request req, Response res) throws ResponseException {
         try {
-            var user = new Gson().fromJson(req.body(), UserData.class);
+            var user = new Gson().fromJson(req.body(), UserDataRecord.class);
             return new Gson().toJson(userService.register(user));
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
@@ -74,7 +74,7 @@ public class Server {
 
     public Object loginHandler(Request req, Response res) throws ResponseException {
         try {
-            var user = new Gson().fromJson(req.body(), UserData.class);
+            var user = new Gson().fromJson(req.body(), UserDataRecord.class);
             return new Gson().toJson(userService.login(user));
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
@@ -93,7 +93,7 @@ public class Server {
     public Object listGamesHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
         try {
-            HashMap<Integer, GameData> games = gameService.listGames();
+            HashMap<Integer, GameDataRecord> games = gameService.listGames();
             return new Gson().toJson(new GameListRecord(games.values()));
         } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
@@ -101,7 +101,7 @@ public class Server {
     public Object createGameHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
         try {
-            Map<String, Integer> id = gameService.createGame(new Gson().fromJson(req.body(), GameData.class).getGameName());
+            Map<String, Integer> id = gameService.createGame(new Gson().fromJson(req.body(), GameDataRecord.class).gameName());
             return new Gson().toJson(id);
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
@@ -109,9 +109,10 @@ public class Server {
     }
 
     public Object joinGameHandler(Request req, Response res) throws ResponseException {
-        authHandler(req.headers("authorization"));
+        String auth = req.headers("authorization");
+        authHandler(auth);
         try {
-            String username = authService.getUsername(req.headers("authorization"));
+            String username = authService.getUsername(auth);
             JsonObject jsonObject = new Gson().fromJson(req.body(), JsonObject.class);
             try {
                 int gameID = jsonObject.get("gameID").getAsInt();

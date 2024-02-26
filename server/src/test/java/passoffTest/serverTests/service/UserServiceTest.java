@@ -1,7 +1,7 @@
 package passoffTest.serverTests.service;
 
 import DataAccess.DAOManager;
-import model.UserData;
+import model.UserDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.WebSocket.ResponseException;
@@ -26,40 +26,40 @@ class UserServiceTest {
     }
     @Test
     void registerPos() {
-        assertDoesNotThrow(() -> service.register(new UserData("user", "password", "email")));
-        assertDoesNotThrow(() -> service.register(new UserData("k", "o", "d")));
-        assertDoesNotThrow(() -> service.register(new UserData("i", "password", "email")));
+        assertDoesNotThrow(() -> service.register(new UserDataRecord("user", "password", "email")));
+        assertDoesNotThrow(() -> service.register(new UserDataRecord("k", "o", "d")));
+        assertDoesNotThrow(() -> service.register(new UserDataRecord("i", "password", "email")));
     }
 
     @Test
     void registerNeg() {
-        assertThrows(ResponseException.class, () -> service.register(new UserData("myUser", "myPassword", "myEmail")));
-        assertThrows(ResponseException.class, () -> service.register(new UserData("whiteUser", "whitePassword", "whiteEmail")));
-        assertThrows(ResponseException.class, () -> service.register(new UserData("blackUser", "blackPassword", "blackEmail")));
-        assertThrows(ResponseException.class, () -> service.register(new UserData("", "", "")));
-        assertThrows(ResponseException.class, () -> service.register(new UserData("", null, "a")));
-        assertThrows(ResponseException.class, () -> service.register(new UserData(null, null, null)));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord("myUser", "myPassword", "myEmail")));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord("whiteUser", "whitePassword", "whiteEmail")));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord("blackUser", "blackPassword", "blackEmail")));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord("", "", "")));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord("", null, "a")));
+        assertThrows(ResponseException.class, () -> service.register(new UserDataRecord(null, null, null)));
     }
 
     @Test
     void loginPos() {
-        assertDoesNotThrow(() -> service.login(new UserData("myUser", "myPassword", "myEmail")));
-        assertDoesNotThrow(() -> service.login(new UserData("whiteUser", "whitePassword", "whiteEmail")));
-        assertDoesNotThrow(() -> service.login(new UserData("blackUser", "blackPassword", "blackEmail")));
+        assertDoesNotThrow(() -> service.login(new UserDataRecord("myUser", "myPassword", "myEmail")));
+        assertDoesNotThrow(() -> service.login(new UserDataRecord("whiteUser", "whitePassword", "whiteEmail")));
+        assertDoesNotThrow(() -> service.login(new UserDataRecord("blackUser", "blackPassword", "blackEmail")));
     }
 
     @Test
     void loginNeg() {
-        assertThrows(ResponseException.class, () -> service.login(new UserData("user", "password", "email")));
-        assertThrows(ResponseException.class, () -> service.login(new UserData("", "", "")));
-        assertThrows(ResponseException.class, () -> service.login(new UserData(null, null, null)));
+        assertThrows(ResponseException.class, () -> service.login(new UserDataRecord("user", "password", "email")));
+        assertThrows(ResponseException.class, () -> service.login(new UserDataRecord("", "", "")));
+        assertThrows(ResponseException.class, () -> service.login(new UserDataRecord(null, null, null)));
     }
 
     @Test
     void logoutPos() {
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("myUser", "myPassword", "myEmail")).authToken()));
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("whiteUser", "whitePassword", "whiteEmail")).authToken()));
-        assertDoesNotThrow(() -> service.logout(service.login(new UserData("blackUser", "blackPassword", "blackEmail")).authToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserDataRecord("myUser", "myPassword", "myEmail")).authToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserDataRecord("whiteUser", "whitePassword", "whiteEmail")).authToken()));
+        assertDoesNotThrow(() -> service.logout(service.login(new UserDataRecord("blackUser", "blackPassword", "blackEmail")).authToken()));
     }
 
     @Test

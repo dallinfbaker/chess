@@ -1,8 +1,8 @@
 package service;
 
 import DataAccess.*;
-import model.AuthData;
-import model.UserData;
+import model.AuthDataRecord;
+import model.UserDataRecord;
 import server.WebSocket.ResponseException;
 import java.util.Objects;
 
@@ -11,7 +11,7 @@ public class UserService {
 
     public UserService(DAOManager daoManager) { this.daoManager = daoManager; }
 
-    public AuthData register(UserData user) throws ResponseException {
+    public AuthDataRecord register(UserDataRecord user) throws ResponseException {
         if (
             Objects.isNull(user.username()) ||
             Objects.isNull(user.email()) ||
@@ -24,8 +24,8 @@ public class UserService {
         return daoManager.authDAO.createAuthToken(user.username());
     }
 
-    public AuthData login(UserData user) throws ResponseException {
-        UserData other = daoManager.userDAO.getUser(user.username());
+    public AuthDataRecord login(UserDataRecord user) throws ResponseException {
+        UserDataRecord other = daoManager.userDAO.getUser(user.username());
         if (other == null) throw new ResponseException(401, "Error: unauthorized");
         else if (!Objects.equals(other.password(), user.password())) throw new ResponseException(401, "Error: unauthorized");
         else return daoManager.authDAO.createAuthToken(user.username());
