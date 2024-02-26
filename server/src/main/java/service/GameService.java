@@ -1,7 +1,7 @@
 package service;
 
 import DataAccess.GameDAO;
-import DataAccess.GameData;
+import model.GameData;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
 import java.util.Map;

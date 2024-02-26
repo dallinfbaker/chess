@@ -1,6 +1,6 @@
 package server;
 
-import DataAccess.GameData;
+import model.GameData;
 import java.util.Collection;
 
 public record GameListRecord(Collection<GameData> games) {}

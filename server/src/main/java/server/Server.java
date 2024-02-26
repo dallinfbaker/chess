@@ -2,6 +2,7 @@ package server;
 
 import DataAccess.*;
 import com.google.gson.*;
+import model.*;
 import server.WebSocket.*;
 import service.*;
 import spark.*;

@@ -1,6 +1,7 @@
 package DataAccess;
 
 
+import model.GameData;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
 

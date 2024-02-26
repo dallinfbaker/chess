@@ -1,5 +1,6 @@
 package DataAccess;
 
+import model.UserData;
 import server.WebSocket.ResponseException;
 
 public interface UserDAOInterface {

@@ -1,6 +1,8 @@
 package service;
 
 import DataAccess.*;
+import model.AuthData;
+import model.UserData;
 import server.WebSocket.ResponseException;
 import java.util.Objects;
 
