@@ -1,10 +1,8 @@
 package DataAccess;
 
-
 import model.GameDataRecord;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
-import java.util.Objects;
 
 public interface GameDAOInterface {
 
