@@ -37,6 +37,7 @@ class GameServiceTest {
         assertDoesNotThrow(() -> service.createGame(""));
         assertDoesNotThrow(() -> service.createGame("myGame"));
     }
+
     @Test
     void createGameNeg() { assertThrows(Exception.class, () -> service.createGame(null)); }
 
@@ -47,6 +48,7 @@ class GameServiceTest {
         assertDoesNotThrow(() -> service.joinGame(2341, "BLACK", "white"));
         assertDoesNotThrow(() -> service.joinGame(3412, "WHITE", "white"));
     }
+
     @Test
     void joinGameNeg() {
         assertThrows(ResponseException.class, () -> service.joinGame(3412, "WHITE", "black"));
@@ -55,6 +57,7 @@ class GameServiceTest {
         assertThrows(ResponseException.class, () -> service.joinGame(1234, "WHITE", "black"));
         assertThrows(ResponseException.class, () -> service.joinGame(2, "BLACK", "black"));
     }
+
     @Test
     void watchGamePos() {
         assertDoesNotThrow(() -> service.watchGame(1234));
@@ -62,8 +65,14 @@ class GameServiceTest {
         assertDoesNotThrow(() -> service.watchGame(2341));
         assertDoesNotThrow(() -> service.watchGame(3412));
     }
+
     @Test
-    void watchGameNeg() { assertThrows(ResponseException.class, () -> service.watchGame(1)); }
+    void watchGameNeg() {
+        assertThrows(ResponseException.class, () -> service.watchGame(1));
+        assertThrows(ResponseException.class, () -> service.watchGame(1111111111));
+        assertThrows(ResponseException.class, () -> service.watchGame(-4));
+    }
+
     @Test
     void listGamesPos() {
         assertDoesNotThrow(() -> service.listGames());
@@ -71,6 +80,7 @@ class GameServiceTest {
         assertEquals(4, service.listGames().size());
         assertDoesNotThrow(() -> service.listGames().get(1234));
     }
+
     @Test
     void listGamesNeg() {
         service = new GameService(new GameDAO());

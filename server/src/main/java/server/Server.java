@@ -52,26 +52,25 @@ public class Server {
         String str = "message: " + ex.getMessage();
         res.body(new Gson().toJson(new ExceptionRecord(str)));
     }
+
     private void authHandler(String auth) throws ResponseException { authService.checkAuth(auth); }
+
     private Object clearHandler(Request req, Response res) throws ResponseException {
         try {
             clearService.clear();
             return "";
         } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object registerUserHandler(Request req, Response res) throws ResponseException {
         try {
             var user = new Gson().fromJson(req.body(), UserData.class);
-            if (
-                Objects.isNull(user.username()) ||
-                Objects.isNull(user.email()) ||
-                Objects.isNull(user.password())
-            ) throw new ResponseException(400, "Error: bad request");
             return new Gson().toJson(userService.register(user));
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object loginHandler(Request req, Response res) throws ResponseException {
         try {
             var user = new Gson().fromJson(req.body(), UserData.class);
@@ -80,21 +79,24 @@ public class Server {
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object logoutHandler(Request req, Response res) throws ResponseException {
-        authHandler(req.headers("authorization"));
+        String auth = req.headers("authorization");
+        authHandler(auth);
         try {
-            userService.logout(req.headers("authorization"));
+            userService.logout(auth);
             return "";
-        } catch (ResponseException e) { throw e; }
-        catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
+        } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object listGamesHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
         try {
             HashMap<Integer, GameData> games = gameService.listGames();
-            return new Gson().toJson(new GameList(games));
+            return new Gson().toJson(new GameListRecord(games.values()));
         } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object createGameHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
         try {
@@ -104,6 +106,7 @@ public class Server {
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
+
     public Object joinGameHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
         try {

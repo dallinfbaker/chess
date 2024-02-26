@@ -39,11 +39,5 @@ class ClearServiceTest {
         } catch(ResponseException ignored) {}
     }
     @Test
-    void clearPos() {
-        assertDoesNotThrow(() -> service.clear());
-    }
-    @Test
-    void clearNeg() {
-        // There isn't really a need for this,
-    }
+    void clearPos() { assertDoesNotThrow(() -> service.clear()); }
 }

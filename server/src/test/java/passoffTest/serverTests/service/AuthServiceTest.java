@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthServiceTest {
 
     private AuthService service;
+
     @BeforeEach
     public void setUp() {
         AuthDAO dao = new AuthDAO();
@@ -20,12 +21,14 @@ class AuthServiceTest {
         dao.addAuth("White","whiteUser");
         dao.addAuth("Black","blackUser");
     }
+
     @Test
     void checkAuthPos() {
         assertDoesNotThrow(() -> service.checkAuth("Black"));
         assertDoesNotThrow(() -> service.checkAuth("White"));
         assertDoesNotThrow(() -> service.checkAuth("1234"));
     }
+
     @Test
     void checkAuthNeg() {
         assertThrows(ResponseException.class, () -> service.checkAuth("black"));
@@ -39,6 +42,7 @@ class AuthServiceTest {
         assertDoesNotThrow(() -> service.getUsername("White"));
         assertDoesNotThrow(() -> service.getUsername("1234"));
     }
+
     @Test
     void getUsernameNeg() {
         assertThrows(NullPointerException.class, () -> service.getUsername("black"));
