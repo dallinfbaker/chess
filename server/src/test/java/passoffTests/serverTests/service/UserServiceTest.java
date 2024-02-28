@@ -1,6 +1,7 @@
 package passoffTests.serverTests.service;
 
 import DataAccess.DAOManager;
+import DataAccess.DataAccessException;
 import model.UserDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class UserServiceTest {
             dao.userDAO.createUser("myUser", "myPassword", "myEmail");
             dao.userDAO.createUser("whiteUser", "whitePassword", "whiteEmail");
             dao.userDAO.createUser("blackUser", "blackPassword", "blackEmail");
-        } catch(ResponseException ignored) {}
+        } catch(DataAccessException ignored) {}
     }
     @Test
     void registerPos() {

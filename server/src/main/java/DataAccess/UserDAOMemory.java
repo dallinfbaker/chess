@@ -15,15 +15,15 @@ public class UserDAOMemory implements UserDAOInterface {
     public UserDataRecord getUser(String username) { return users.get(username); }
 
     @Override
-    public void createUser(String username, String password, String email) throws ResponseException {
-        if (users.containsKey(username)) throw new ResponseException(403, "Error: already taken");
+    public void createUser(String username, String password, String email) throws DataAccessException {
+        if (users.containsKey(username)) throw new DataAccessException("Error: already taken");
         UserDataRecord userData = new UserDataRecord(username, password, email);
         users.put(username, userData);
     }
 
     @Override
-    public void createUser(UserDataRecord user) throws ResponseException {
-        if (users.containsKey(user.username())) throw new ResponseException(403, "Error: already taken");
+    public void createUser(UserDataRecord user) throws DataAccessException {
+        if (users.containsKey(user.username())) throw new DataAccessException("Error: already taken");
         users.put(user.username(), user);
     }
 

@@ -20,7 +20,8 @@ public class UserService {
             Objects.equals(user.password(), "") ||
             Objects.equals(user.email(), "")
         ) throw new ResponseException(400, "Error: bad request");
-        daoManager.userDAO.createUser(user);
+        try { daoManager.userDAO.createUser(user); }
+        catch (DataAccessException e) { throw new ResponseException(403, e.getMessage()); }
         return daoManager.authDAO.createAuthToken(user.username());
     }
 

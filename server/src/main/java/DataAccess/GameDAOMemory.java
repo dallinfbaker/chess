@@ -39,8 +39,8 @@ public class GameDAOMemory implements GameDAOInterface {
 
     public HashMap<Integer, GameDataRecord> getGames() { return games; }
 
-    public GameDataRecord getGame(int gameID) throws ResponseException {
-        if (!games.containsKey(gameID)) throw new ResponseException(400, "Error: bad request");
+    public GameDataRecord getGame(int gameID) throws DataAccessException {
+        if (!games.containsKey(gameID)) throw new DataAccessException("Error: bad request");
         return games.get(gameID);
     }
 
