@@ -1,6 +1,6 @@
-package passoffTest.serverTests.service;
+package passoffTests.serverTests.service;
 
-import DataAccess.AuthDAO;
+import DataAccess.AuthDAOMemory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.WebSocket.ResponseException;
@@ -14,7 +14,7 @@ class AuthServiceTest {
 
     @BeforeEach
     public void setUp() {
-        AuthDAO dao = new AuthDAO();
+        AuthDAOMemory dao = new AuthDAOMemory();
         service = new AuthService(dao);
 
         dao.addAuth("1234","myUser");

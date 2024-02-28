@@ -1,7 +1,7 @@
 package service;
 
 import DataAccess.DataAccessException;
-import DataAccess.GameDAO;
+import DataAccess.GameDAOMemory;
 import model.GameDataRecord;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class GameService {
-    private final GameDAO gameDAO;
+    private final GameDAOMemory gameDAO;
 
-    public GameService(GameDAO gameDAO) { this.gameDAO = gameDAO; }
+    public GameService(GameDAOMemory gameDAO) { this.gameDAO = gameDAO; }
     public Map<String, Integer> createGame(String name) throws ResponseException {
         if (Objects.isNull(name)) throw new ResponseException(400, "Error: bad request");
         int id = gameDAO.createGameData(name);

@@ -5,11 +5,11 @@ import model.GameDataRecord;
 import server.WebSocket.ResponseException;
 import java.util.*;
 
-public class GameDAO implements GameDAOInterface {
+public class GameDAOMemory implements GameDAOInterface {
 
     private HashMap<Integer, GameDataRecord> games;
 
-    public GameDAO(){ games = new HashMap<>(); }
+    public GameDAOMemory(){ games = new HashMap<>(); }
 
     private int generateID() {
         int id = UUID.randomUUID().hashCode();

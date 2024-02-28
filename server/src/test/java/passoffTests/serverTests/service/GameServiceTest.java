@@ -1,6 +1,6 @@
-package passoffTest.serverTests.service;
+package passoffTests.serverTests.service;
 
-import DataAccess.GameDAO;
+import DataAccess.GameDAOMemory;
 import chess.ChessGame;
 import model.GameDataRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ class GameServiceTest {
 
     @BeforeEach
     public void setUp() {
-        GameDAO dao = new GameDAO();
+        GameDAOMemory dao = new GameDAOMemory();
         service = new GameService(dao);
 
         GameDataRecord data = new GameDataRecord(1234, null, null, "", new ChessGame());
@@ -87,7 +87,7 @@ class GameServiceTest {
 
     @Test
     void listGamesNeg() {
-        service = new GameService(new GameDAO());
+        service = new GameService(new GameDAOMemory());
 
         assertEquals(0, service.listGames().size());
         assertNull(service.listGames().get(1234));

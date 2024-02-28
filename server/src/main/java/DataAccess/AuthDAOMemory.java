@@ -5,11 +5,11 @@ import model.AuthDataRecord;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class AuthDAO implements AuthDAOInterface {
+public class AuthDAOMemory implements AuthDAOInterface {
 
     private HashMap<String, AuthDataRecord> auths;
 
-    public AuthDAO() { auths = new HashMap<>(); }
+    public AuthDAOMemory() { auths = new HashMap<>(); }
 
     @Override
     public AuthDataRecord createAuthToken(String username) {

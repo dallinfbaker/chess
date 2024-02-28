@@ -5,11 +5,11 @@ import server.WebSocket.ResponseException;
 
 import java.util.HashMap;
 
-public class UserDAO implements UserDAOInterface {
+public class UserDAOMemory implements UserDAOInterface {
 
     private HashMap<String, UserDataRecord> users;
 
-    public UserDAO() { this.users = new HashMap<>(); }
+    public UserDAOMemory() { this.users = new HashMap<>(); }
 
     @Override
     public UserDataRecord getUser(String username) { return users.get(username); }

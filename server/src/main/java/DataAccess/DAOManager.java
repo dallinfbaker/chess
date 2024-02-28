@@ -1,7 +1,7 @@
 package DataAccess;
 
 public class DAOManager {
-    public AuthDAO authDAO = new AuthDAO();
-    public UserDAO userDAO = new UserDAO();
-    public GameDAO gameDAO = new GameDAO();
+    public AuthDAOMemory authDAO = new AuthDAOMemory();
+    public UserDAOMemory userDAO = new UserDAOMemory();
+    public GameDAOMemory gameDAO = new GameDAOMemory();
 }

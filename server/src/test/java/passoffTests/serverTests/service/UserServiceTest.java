@@ -1,4 +1,4 @@
-package passoffTest.serverTests.service;
+package passoffTests.serverTests.service;
 
 import DataAccess.DAOManager;
 import model.UserDataRecord;
