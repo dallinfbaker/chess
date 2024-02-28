@@ -2,7 +2,6 @@ package DataAccess;
 
 import chess.ChessGame;
 import model.GameDataRecord;
-import server.WebSocket.ResponseException;
 import java.util.*;
 
 public class GameDAOMemory implements GameDAOInterface {

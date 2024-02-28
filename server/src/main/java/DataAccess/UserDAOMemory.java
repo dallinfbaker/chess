@@ -1,7 +1,6 @@
 package DataAccess;
 
 import model.UserDataRecord;
-import server.WebSocket.ResponseException;
 
 import java.util.HashMap;
 

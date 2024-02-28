@@ -6,7 +6,6 @@ import chess.ChessGame;
 import model.GameDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.WebSocket.ResponseException;
 import service.ClearService;
 
 import static org.junit.jupiter.api.Assertions.*;

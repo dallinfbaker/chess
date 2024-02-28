@@ -1,7 +1,6 @@
 package DataAccess;
 
 import model.UserDataRecord;
-import server.WebSocket.ResponseException;
 
 public interface UserDAOInterface {
     UserDataRecord getUser(String username) throws DataAccessException;

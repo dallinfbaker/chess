@@ -1,7 +1,6 @@
 package DataAccess;
 
 import model.AuthDataRecord;
-import server.WebSocket.ResponseException;
 
 public interface AuthDAOInterface {
 
