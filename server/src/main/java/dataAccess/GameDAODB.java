@@ -4,15 +4,12 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameDataRecord;
 import model.GameListRecord;
-import model.UserDataRecord;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class GameDAODB implements GameDAOInterface {
 
@@ -36,7 +33,6 @@ public class GameDAODB implements GameDAOInterface {
 
     @Override
     public GameListRecord getGames() throws DataAccessException {
-        Collection<GameDataRecord> games = new ArrayList<>();
         String statement = "SELECT * FROM chess_games";
         return new GameListRecord(DatabaseManager.executeQuery(statement, buildGame));
     }

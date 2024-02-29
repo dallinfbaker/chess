@@ -1,15 +1,10 @@
 package dataAccess;
 
-import chess.ChessGame;
-import com.google.gson.Gson;
-import model.GameDataRecord;
 import model.UserDataRecord;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.*;
 import java.util.function.Function;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserDAODB implements UserDAOInterface {
 
