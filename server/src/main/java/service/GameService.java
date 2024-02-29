@@ -1,7 +1,7 @@
 package service;
 
-import DataAccess.DataAccessException;
-import DataAccess.GameDAOInterface;
+import dataAccess.DataAccessException;
+import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
 import model.GameListRecord;
 import server.WebSocket.ResponseException;

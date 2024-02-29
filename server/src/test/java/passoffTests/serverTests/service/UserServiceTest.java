@@ -1,7 +1,7 @@
 package passoffTests.serverTests.service;
 
-import DataAccess.DAOManager;
-import DataAccess.DataAccessException;
+import dataAccess.DAOManager;
+import dataAccess.DataAccessException;
 import model.UserDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

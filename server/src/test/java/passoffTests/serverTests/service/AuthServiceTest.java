@@ -1,6 +1,6 @@
 package passoffTests.serverTests.service;
 
-import DataAccess.AuthDAOMemory;
+import dataAccess.AuthDAOMemory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.WebSocket.ResponseException;

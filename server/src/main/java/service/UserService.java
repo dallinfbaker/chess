@@ -1,6 +1,6 @@
 package service;
 
-import DataAccess.*;
+import dataAccess.*;
 import model.AuthDataRecord;
 import model.UserDataRecord;
 import server.WebSocket.ResponseException;

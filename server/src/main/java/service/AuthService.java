@@ -1,7 +1,7 @@
 package service;
 
-import DataAccess.AuthDAOInterface;
-import DataAccess.DataAccessException;
+import dataAccess.AuthDAOInterface;
+import dataAccess.DataAccessException;
 import server.WebSocket.ResponseException;
 
 public class AuthService {

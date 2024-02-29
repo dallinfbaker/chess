@@ -1,7 +1,7 @@
 package service;
 
-import DataAccess.DAOManager;
-import DataAccess.DataAccessException;
+import dataAccess.DAOManager;
+import dataAccess.DataAccessException;
 
 public class ClearService {
     private final DAOManager daoManager;

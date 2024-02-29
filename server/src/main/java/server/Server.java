@@ -1,6 +1,6 @@
 package server;
 
-import DataAccess.*;
+import dataAccess.*;
 import com.google.gson.*;
 import model.*;
 import server.WebSocket.*;
