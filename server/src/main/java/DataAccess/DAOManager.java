@@ -1,9 +1,9 @@
 package DataAccess;
 
 public class DAOManager {
-    public AuthDAOInterface authDAO = new AuthDAOMemory();
-    public UserDAOInterface userDAO = new UserDAOMemory();
-    public GameDAOInterface gameDAO = new GameDAOMemory();
+    public AuthDAOInterface authDAO;
+    public UserDAOInterface userDAO;
+    public GameDAOInterface gameDAO;
 
     public DAOManager(boolean database) {
         if (database) {
