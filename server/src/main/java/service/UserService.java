@@ -20,17 +20,23 @@ public class UserService {
             Objects.equals(user.password(), "") ||
             Objects.equals(user.email(), "")
         ) throw new ResponseException(400, "Error: bad request");
-        try { daoManager.userDAO.createUser(user); }
-        catch (DataAccessException e) { throw new ResponseException(403, e.getMessage()); }
-        return daoManager.authDAO.createAuthToken(user.username());
+        try {
+            daoManager.userDAO.createUser(user);
+            return daoManager.authDAO.createAuthToken(user.username());
+        } catch (DataAccessException e) { throw new ResponseException(403, e.getMessage()); }
     }
 
     public AuthDataRecord login(UserDataRecord user) throws ResponseException {
-        UserDataRecord other = daoManager.userDAO.getUser(user.username());
-        if (other == null) throw new ResponseException(401, "Error: unauthorized");
-        else if (!Objects.equals(other.password(), user.password())) throw new ResponseException(401, "Error: unauthorized");
-        else return daoManager.authDAO.createAuthToken(user.username());
+        try {
+            UserDataRecord other = daoManager.userDAO.getUser(user.username());
+            if (other == null) throw new ResponseException(401, "Error: unauthorized");
+            else if (!Objects.equals(other.password(), user.password())) throw new ResponseException(401, "Error: unauthorized");
+            else return daoManager.authDAO.createAuthToken(user.username());
+        } catch (DataAccessException e) { throw new ResponseException(401, "Error: unauthorized"); }
     }
 
-    public void logout(String token) { daoManager.authDAO.deleteAuth(token); }
+    public void logout(String token) throws ResponseException {
+        try { daoManager.authDAO.deleteAuth(token); }
+        catch (DataAccessException e) { throw new ResponseException(401, "Error: unauthorized"); }
+    }
 }

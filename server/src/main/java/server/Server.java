@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Server {
 
-    private final DAOManager daoManager = new DAOManager();
+    private final DAOManager daoManager = new DAOManager(true);
     private final AuthService authService = new AuthService(daoManager.authDAO);
     private final ClearService clearService = new ClearService(daoManager);
     private final UserService userService = new UserService(daoManager);
@@ -92,10 +92,8 @@ public class Server {
 
     public Object listGamesHandler(Request req, Response res) throws ResponseException {
         authHandler(req.headers("authorization"));
-        try {
-            HashMap<Integer, GameDataRecord> games = gameService.listGames();
-            return new Gson().toJson(new GameListRecord(games.values()));
-        } catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
+        try { return new Gson().toJson(gameService.listGames()); }
+        catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
 
     public Object createGameHandler(Request req, Response res) throws ResponseException {

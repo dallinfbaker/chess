@@ -2,6 +2,8 @@ package DataAccess;
 
 import chess.ChessGame;
 import model.GameDataRecord;
+import model.GameListRecord;
+
 import java.util.*;
 
 public class GameDAOMemory implements GameDAOInterface {
@@ -36,7 +38,7 @@ public class GameDAOMemory implements GameDAOInterface {
         games.put(game.gameID(), new GameDataRecord(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
     }
 
-    public HashMap<Integer, GameDataRecord> getGames() { return games; }
+    public GameListRecord getGames() { return new GameListRecord(games.values()); }
 
     public GameDataRecord getGame(int gameID) throws DataAccessException {
         if (!games.containsKey(gameID)) throw new DataAccessException("Error: bad request");

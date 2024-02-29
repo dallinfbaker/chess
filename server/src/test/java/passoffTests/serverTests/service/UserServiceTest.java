@@ -16,7 +16,7 @@ class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
-        DAOManager dao = new DAOManager();
+        DAOManager dao = new DAOManager(false);
         service = new UserService(dao);
 
         try {

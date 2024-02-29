@@ -24,6 +24,7 @@ public class DatabaseManager {
 
                 var host = props.getProperty("db.host");
                 var port = Integer.parseInt(props.getProperty("db.port"));
+//                var database = props.getProperty("db.host");
                 connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
@@ -37,6 +38,7 @@ public class DatabaseManager {
     static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
+//            var statement = "create table book ()" + databaseName;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();

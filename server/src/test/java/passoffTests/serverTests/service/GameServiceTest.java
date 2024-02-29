@@ -3,6 +3,7 @@ package passoffTests.serverTests.service;
 import DataAccess.GameDAOMemory;
 import chess.ChessGame;
 import model.GameDataRecord;
+import model.GameListRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.WebSocket.ResponseException;
@@ -78,18 +79,18 @@ class GameServiceTest {
     }
 
     @Test
-    void listGamesPos() {
+    void listGamesPos() throws ResponseException {
         assertDoesNotThrow(() -> service.listGames());
-        assertSame(HashMap.class, service.listGames().getClass());
-        assertEquals(4, service.listGames().size());
-        assertDoesNotThrow(() -> service.listGames().get(1234));
+        assertSame(GameListRecord.class, service.listGames().getClass());
+        assertEquals(4, service.listGames().games().size());
+        assertDoesNotThrow(() -> service.listGames().games());
     }
 
     @Test
-    void listGamesNeg() {
+    void listGamesNeg() throws ResponseException {
         service = new GameService(new GameDAOMemory());
 
-        assertEquals(0, service.listGames().size());
-        assertNull(service.listGames().get(1234));
+        assertEquals(0, service.listGames().games().size());
+//        assertNull(service.listGames().games());
     }
 }

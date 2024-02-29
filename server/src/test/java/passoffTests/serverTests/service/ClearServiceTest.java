@@ -16,7 +16,7 @@ class ClearServiceTest {
 
     @BeforeEach
     public void setUp() {
-        DAOManager dao = new DAOManager();
+        DAOManager dao = new DAOManager(false);
         service = new ClearService(dao);
 
         GameDataRecord data = new GameDataRecord(1234, "", "", "", new ChessGame());

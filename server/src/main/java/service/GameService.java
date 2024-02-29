@@ -1,23 +1,27 @@
 package service;
 
 import DataAccess.DataAccessException;
-import DataAccess.GameDAOMemory;
+import DataAccess.GameDAOInterface;
 import model.GameDataRecord;
+import model.GameListRecord;
 import server.WebSocket.ResponseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class GameService {
-    private final GameDAOMemory gameDAO;
+    private final GameDAOInterface gameDAO;
 
-    public GameService(GameDAOMemory gameDAO) { this.gameDAO = gameDAO; }
+    public GameService(GameDAOInterface gameDAO) { this.gameDAO = gameDAO; }
     public Map<String, Integer> createGame(String name) throws ResponseException {
         if (Objects.isNull(name)) throw new ResponseException(400, "Error: bad request");
-        int id = gameDAO.createGameData(name);
-        Map<String, Integer> gameId = new HashMap<>();
-        gameId.put("gameID", id);
-        return gameId;
+        try {
+            int id = gameDAO.createGameData(name);
+            Map<String, Integer> gameId = new HashMap<>();
+            gameId.put("gameID", id);
+            return gameId;
+        }
+        catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request");}
     }
     public void joinGame(int gameID, String playerColor, String username) throws ResponseException {
         GameDataRecord gameData;
@@ -41,5 +45,8 @@ public class GameService {
         try { gameDAO.getGame(gameID); }
         catch (DataAccessException e) { throw new ResponseException(400, e.getMessage()); }
     }
-    public HashMap<Integer, GameDataRecord> listGames() { return gameDAO.getGames(); }
+    public GameListRecord listGames() throws ResponseException {
+        try { return gameDAO.getGames(); }
+        catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
+    }
 }

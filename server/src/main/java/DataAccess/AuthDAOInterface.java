@@ -9,5 +9,5 @@ public interface AuthDAOInterface {
     boolean validAuth(String token) throws DataAccessException;
     void deleteAuth(String token) throws DataAccessException;
     void clearAuth() throws DataAccessException;
-
+    void addAuth(String number, String myUser);
 }
