@@ -25,19 +25,22 @@ public class GameService {
     }
     public void joinGame(int gameID, String playerColor, String username) throws ResponseException {
         GameDataRecord gameData;
+        String user;
         try { gameData = gameDAO.getGame(gameID); }
         catch (DataAccessException e) { throw new ResponseException(400, e.getMessage()); }
         if (Objects.equals(playerColor, "WHITE")) {
             try {
-                if (Objects.isNull(gameData.whiteUsername())) gameDAO.setWhiteUsername(gameID, username);
-                else if (!Objects.equals(gameData.whiteUsername(), username))
+                user = gameData.whiteUsername();
+                if (Objects.isNull(user)) gameDAO.setWhiteUsername(gameID, username);
+                else if (!Objects.equals(user, username))
                     throw new ResponseException(403, "Error: already taken");
-            } catch (DataAccessException e) { throw new ResponseException(401, "Error: bad request"); }
+            } catch (DataAccessException e) { throw new ResponseException(401, e.getMessage());} //"Error: bad request"); }
         }
         else {
             try {
-                if (Objects.isNull(gameData.blackUsername())) gameDAO.setBlackUsername(gameID, username);
-                else if (!Objects.equals(gameData.blackUsername(), username)) throw new ResponseException(403,"Error: already taken");
+                user = gameData.blackUsername();
+                if (Objects.isNull(user)) gameDAO.setBlackUsername(gameID, username);
+                else if (!Objects.equals(user, username)) throw new ResponseException(403,"Error: already taken");
             } catch (DataAccessException e) { throw new ResponseException(401, "Error: bad request"); }
         }
     }

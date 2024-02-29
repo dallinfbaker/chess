@@ -1,7 +1,14 @@
 package DataAccess;
 
+import model.AuthDataRecord;
+import model.GameDataRecord;
+import model.UserDataRecord;
+
 import java.sql.*;
 import java.util.Properties;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class DatabaseManager {
     private static final String databaseName;
@@ -24,7 +31,6 @@ public class DatabaseManager {
 
                 var host = props.getProperty("db.host");
                 var port = Integer.parseInt(props.getProperty("db.port"));
-//                var database = props.getProperty("db.host");
                 connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
@@ -38,7 +44,6 @@ public class DatabaseManager {
     static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-//            var statement = "create table book ()" + databaseName;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
@@ -68,5 +73,29 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    static void executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var conn = getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                prepareStatement(ps, params).executeUpdate();
+            }
+        } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
+    }
+
+    static PreparedStatement prepareStatement(PreparedStatement ps, Object... params) throws SQLException {
+        for (var i = 0; i < params.length; i++) {
+            var param = params[i];
+            switch (param) {
+                case String p -> ps.setString(i + 1, p);
+                case Integer p -> ps.setInt(i + 1, p);
+                case UserDataRecord p -> ps.setString(i + 1, p.toString());
+                case GameDataRecord p -> ps.setString(i + 1, p.toString());
+                case AuthDataRecord p -> ps.setString(i + 1, p.toString());
+                case null -> ps.setNull(i + 1, NULL);
+                default -> {}
+            }
+        }
+        return ps;
     }
 }

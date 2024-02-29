@@ -1,59 +1,55 @@
 package DataAccess;
 
 import model.AuthDataRecord;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.UUID;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class AuthDAODB  implements AuthDAOInterface {
 
-    AuthDAODB() {}
+    private AuthDataRecord buildAuth(ResultSet rs) throws SQLException {
+        rs.next();
+        var token = rs.getString(1);
+        var username = rs.getString(2);
+        return new AuthDataRecord(token, username);
+    }
 
     @Override
     public AuthDataRecord createAuthToken(String username) throws DataAccessException {
         String token = UUID.randomUUID().toString();
-        AuthDataRecord authData = new AuthDataRecord(token, username);
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "INSERT INTO auth_tokens (token, username) VALUES (?, ?)";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, authData.authToken());
-                statement.setString(2, authData.username());
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
-
-        return authData;
+        String statement = "INSERT INTO auth_tokens (token, username) VALUES (?, ?)";
+        DatabaseManager.executeUpdate(statement, token, username);
+        return new AuthDataRecord(token, username);
     }
 
     @Override
     public AuthDataRecord getAuth(String token) throws DataAccessException {
-        try (Connection conn =  DatabaseManager.getConnection()) {
-            String sql = "SELECT username FROM auth_tokens WHERE token = ?";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, token);
-                try (ResultSet rs = statement.executeQuery()) {
-                    if (rs.next()) { return new AuthDataRecord(token, rs.getString(1)); }
-                }
+        String statement = "SELECT username FROM auth_tokens WHERE token = ?";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                ResultSet rs = DatabaseManager.prepareStatement(ps, token).executeQuery();
+                return buildAuth(rs);
             }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
-        return null;
     }
 
     @Override
-    public boolean validAuth(String token) throws DataAccessException { return Objects.isNull(getAuth(token)); }
+    public boolean validAuth(String token) {
+        try {
+            getAuth(token);
+            return true;
+        } catch(DataAccessException ignored) { return false; }
+    }
 
     @Override
     public void deleteAuth(String token) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "DELETE FROM auth_tokens WHERE token = ?";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, token);
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
+        String statement = "DELETE FROM auth_tokens WHERE token = ?";
+        DatabaseManager.executeUpdate(statement, token);
     }
 
     @Override
@@ -65,15 +61,10 @@ public class AuthDAODB  implements AuthDAOInterface {
     }
 
     @Override
-    public void addAuth(String number, String myUser) {
-        AuthDataRecord authData = new AuthDataRecord(number, myUser);
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "INSERT INTO auth_tokens (token, username) VALUES (?, ?)";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, authData.authToken());
-                statement.setString(2, authData.username());
-                statement.executeUpdate();
-            }
-        } catch (SQLException | DataAccessException ignored) {}
+    public void addAuth(String number, String username) {
+        String token = UUID.randomUUID().toString();
+        String statement = "INSERT INTO auth_tokens (token, username) VALUES (?, ?)";
+        try { DatabaseManager.executeUpdate(statement, token, username); }
+        catch (DataAccessException ignored) {}
     }
 }

@@ -12,11 +12,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
+    boolean database = true;
+
     private UserService service;
 
     @BeforeEach
     public void setUp() {
-        DAOManager dao = new DAOManager(false);
+        DAOManager dao = new DAOManager(database);
+        try {
+            dao.userDAO.clearUsers();
+            dao.authDAO.clearAuth();
+        } catch (DataAccessException ignored) {}
         service = new UserService(dao);
 
         try {

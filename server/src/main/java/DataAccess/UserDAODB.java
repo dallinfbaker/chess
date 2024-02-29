@@ -1,49 +1,37 @@
 package DataAccess;
 
 import model.UserDataRecord;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class UserDAODB implements UserDAOInterface {
 
     UserDAODB() {}
 
+    private UserDataRecord buildUser(ResultSet rs) throws SQLException {
+        rs.next();
+        var name = rs.getString(1);
+        var word = rs.getString(2);
+        var mail = rs.getString(3);
+        return new UserDataRecord(name, word, mail);
+    }
+
     @Override
     public UserDataRecord getUser(String username) throws DataAccessException {
+        String statement = "SELECT username, password, email FROM users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "SELECT username, password, email FROM users WHERE username = ?";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, username);
-                try (ResultSet rs = statement.executeQuery()) {
-//                    String name = rs.getString(1);
-//                    String word = rs.getString(2);
-//                    String mail = rs.getString(3);
-//                    return new UserDataRecord(name, word, mail);
-                    if (rs.next()) {
-                        var name = rs.getString(1);
-                        var word = rs.getString(2);
-                        var mail = rs.getString(3);
-                        return new UserDataRecord(name, word, mail);
-                    }
-                }
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                ResultSet rs = DatabaseManager.prepareStatement(ps, username).executeQuery();
+                return buildUser(rs);
             }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
-        return null;
     }
 
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, username);
-                statement.setString(2, password);
-                statement.setString(2, email);
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
+        String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        DatabaseManager.executeUpdate(statement, username, password, email);
     }
 
     @Override

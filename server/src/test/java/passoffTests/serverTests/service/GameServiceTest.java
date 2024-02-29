@@ -1,5 +1,8 @@
 package passoffTests.serverTests.service;
 
+import DataAccess.DataAccessException;
+import DataAccess.GameDAODB;
+import DataAccess.GameDAOInterface;
 import DataAccess.GameDAOMemory;
 import chess.ChessGame;
 import model.GameDataRecord;
@@ -12,11 +15,19 @@ import service.GameService;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
+    boolean database = true;
     private GameService service;
 
     @BeforeEach
     public void setUp() {
-        GameDAOMemory dao = new GameDAOMemory();
+        GameDAOInterface dao;
+        if (database) {
+            dao = new GameDAODB();
+        }
+        else { dao = new GameDAOMemory(); }
+        try { dao.clearGames(); }
+        catch (DataAccessException ignored) {}
+
         service = new GameService(dao);
 
         GameDataRecord data = new GameDataRecord(1234, null, null, "", new ChessGame());
@@ -31,7 +42,6 @@ class GameServiceTest {
             dao.setWhiteUsername(3412, "white");
             dao.setBlackUsername(3412, "black");
         } catch (Exception ignored) {}
-
     }
 
     @Test
@@ -43,7 +53,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGameNeg() { assertThrows(Exception.class, () -> service.createGame(null)); }
+    void createGameNeg() { assertThrows(ResponseException.class, () -> service.createGame(null)); }
 
     @Test
     void joinGamePos() {
@@ -90,6 +100,5 @@ class GameServiceTest {
         service = new GameService(new GameDAOMemory());
 
         assertEquals(0, service.listGames().games().size());
-//        assertNull(service.listGames().games());
     }
 }
