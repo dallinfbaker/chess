@@ -4,24 +4,28 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameDataRecord;
 import model.GameListRecord;
+import model.UserDataRecord;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class GameDAODB implements GameDAOInterface {
 
-    private GameDataRecord buildGame(ResultSet rs) throws SQLException {
-        int gameId = rs.getInt(1);
-        String white = rs.getString(2);
-        String black = rs.getString(3);
-        String name = rs.getString(4);
-        ChessGame game = new Gson().fromJson(rs.getString(5), ChessGame.class);
-        return new GameDataRecord(gameId, white, black, name, game);
-    }
+    Function<ResultSet, GameDataRecord> buildGame = rs -> {
+        try {
+            int gameId = rs.getInt(1);
+            String white = rs.getString(2);
+            String black = rs.getString(3);
+            String name = rs.getString(4);
+            ChessGame game = new Gson().fromJson(rs.getString(5), ChessGame.class);
+            return new GameDataRecord(gameId, white, black, name, game);
+        } catch (SQLException ignored) { return null; }
+    };
 
     private int generateID() {
         int id = UUID.randomUUID().hashCode();
@@ -34,23 +38,14 @@ public class GameDAODB implements GameDAOInterface {
     public GameListRecord getGames() throws DataAccessException {
         Collection<GameDataRecord> games = new ArrayList<>();
         String statement = "SELECT * FROM chess_games";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
-            ResultSet rs = DatabaseManager.prepareStatement(ps).executeQuery();
-            while (rs.next()) { games.add(buildGame(rs)); }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
-        return new GameListRecord(games);
+        return new GameListRecord(DatabaseManager.executeQuery(statement, buildGame));
     }
 
     @Override
     public GameDataRecord getGame(int gameID) throws DataAccessException {
         String statement = "SELECT game_id, white_player_username, black_player_username, game_name, game_json FROM chess_games WHERE game_id = ?";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
-            ResultSet rs = DatabaseManager.prepareStatement(ps, gameID).executeQuery();
-            rs.next();
-            return buildGame(rs);
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
+        try { return (GameDataRecord) DatabaseManager.executeQuery(statement, buildGame, gameID).toArray()[0]; }
+        catch (ArrayIndexOutOfBoundsException e) { throw new DataAccessException(e.getMessage()); }
     }
 
     @Override
@@ -76,10 +71,8 @@ public class GameDAODB implements GameDAOInterface {
 
     @Override
     public void clearGames() throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "TRUNCATE TABLE chess_games";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) { statement.executeUpdate(); }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
+        String statement = "TRUNCATE TABLE chess_games";
+        DatabaseManager.executeUpdate(statement);
     }
 
     @Override
