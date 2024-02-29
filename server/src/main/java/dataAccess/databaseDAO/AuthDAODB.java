@@ -57,9 +57,8 @@ public class AuthDAODB  implements AuthDAOInterface {
 
     @Override
     public void addAuth(String number, String username) {
-        String token = UUID.randomUUID().toString();
         String statement = "INSERT INTO auth_tokens (token, username) VALUES (?, ?)";
-        try { DatabaseManager.executeUpdate(statement, token, username); }
+        try { DatabaseManager.executeUpdate(statement, number, username); }
         catch (DataAccessException ignored) {}
     }
 }
