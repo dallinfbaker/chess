@@ -29,7 +29,7 @@ public class AuthDAODB  implements AuthDAOInterface {
 
     @Override
     public AuthDataRecord getAuth(String token) throws DataAccessException {
-        String statement = "SELECT username FROM auth_tokens WHERE token = ?";
+        String statement = "SELECT token, username FROM auth_tokens WHERE token = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 ResultSet rs = DatabaseManager.prepareStatement(ps, token).executeQuery();

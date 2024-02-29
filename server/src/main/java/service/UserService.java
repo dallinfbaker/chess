@@ -23,7 +23,7 @@ public class UserService {
         try {
             daoManager.userDAO.createUser(user);
             return daoManager.authDAO.createAuthToken(user.username());
-        } catch (DataAccessException e) { throw new ResponseException(403, e.getMessage()); }
+        } catch (DataAccessException e) { throw new ResponseException(403, "Error: already exists"); }
     }
 
     public AuthDataRecord login(UserDataRecord user) throws ResponseException {

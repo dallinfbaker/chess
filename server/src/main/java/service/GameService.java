@@ -27,14 +27,14 @@ public class GameService {
         GameDataRecord gameData;
         String user;
         try { gameData = gameDAO.getGame(gameID); }
-        catch (DataAccessException e) { throw new ResponseException(400, e.getMessage()); }
+        catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         if (Objects.equals(playerColor, "WHITE")) {
             try {
                 user = gameData.whiteUsername();
                 if (Objects.isNull(user)) gameDAO.setWhiteUsername(gameID, username);
                 else if (!Objects.equals(user, username))
                     throw new ResponseException(403, "Error: already taken");
-            } catch (DataAccessException e) { throw new ResponseException(401, e.getMessage());} //"Error: bad request"); }
+            } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         }
         else {
             try {
@@ -46,7 +46,7 @@ public class GameService {
     }
     public void watchGame(int gameID) throws ResponseException {
         try { gameDAO.getGame(gameID); }
-        catch (DataAccessException e) { throw new ResponseException(400, e.getMessage()); }
+        catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
     }
     public GameListRecord listGames() throws ResponseException {
         try { return gameDAO.getGames(); }

@@ -75,7 +75,9 @@ public class Server {
     public Object loginHandler(Request req, Response res) throws ResponseException {
         try {
             var user = new Gson().fromJson(req.body(), UserDataRecord.class);
-            return new Gson().toJson(userService.login(user));
+            AuthDataRecord auth = userService.login(user);
+            res.status(200);
+            return new Gson().toJson(auth);
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }

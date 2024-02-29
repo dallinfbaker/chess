@@ -15,7 +15,6 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 public class GameDAODB implements GameDAOInterface {
 
     private GameDataRecord buildGame(ResultSet rs) throws SQLException {
-        rs.next();
         int gameId = rs.getInt(1);
         String white = rs.getString(2);
         String black = rs.getString(3);
@@ -34,21 +33,11 @@ public class GameDAODB implements GameDAOInterface {
     @Override
     public GameListRecord getGames() throws DataAccessException {
         Collection<GameDataRecord> games = new ArrayList<>();
+        String statement = "SELECT * FROM chess_games";
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "SELECT * FROM chess_games";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                try (ResultSet rs = statement.executeQuery()) {
-                    while (rs.next()) {
-                        int gameId = rs.getInt("game_id");
-                        String white = rs.getString(1);
-                        String black = rs.getString(2);
-                        String name = rs.getString(3);
-                        ChessGame game = new Gson().fromJson(rs.getString(4), ChessGame.class);
-
-                        GameDataRecord data = new GameDataRecord(gameId, white, black, name, game);
-                        games.add(data);
-                    }
-                }
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                ResultSet rs = DatabaseManager.prepareStatement(ps).executeQuery();
+                while (rs.next()) { games.add(buildGame(rs)); }
             }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
         return new GameListRecord(games);
@@ -60,6 +49,7 @@ public class GameDAODB implements GameDAOInterface {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 ResultSet rs = DatabaseManager.prepareStatement(ps, gameID).executeQuery();
+                rs.next();
                 return buildGame(rs);
             }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
