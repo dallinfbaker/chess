@@ -13,6 +13,8 @@ public class DAOManager {
     public GameDAOInterface gameDAO;
 
     public DAOManager(boolean database) {
+        try { DatabaseManager.createDatabase(); }
+        catch (DataAccessException ignored) {}
         if (database) {
             authDAO = new AuthDAODB();
             userDAO = new UserDAODB();

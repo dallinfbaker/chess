@@ -79,6 +79,7 @@ public class DatabaseManager {
     }
 
     static public void executeUpdate(String statement, Object... params) throws DataAccessException {
+        if (!isValidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
             prepareStatement(ps, params).executeUpdate();
@@ -86,13 +87,14 @@ public class DatabaseManager {
     }
 
     static public <T> Collection<T> executeQuery(String statement, Function<ResultSet, T> builder, Object... params) throws DataAccessException {
+        if (!isValidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         Collection<T> list = new ArrayList<>();
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
             ResultSet rs = prepareStatement(ps, params).executeQuery();
             while (rs.next()) {list.add(builder.apply(rs)); }
             return list;
-        } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
+        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 
     private static PreparedStatement prepareStatement(PreparedStatement ps, Object... params) throws SQLException {
@@ -109,5 +111,13 @@ public class DatabaseManager {
             }
         }
         return ps;
+    }
+
+    private static boolean isValidSQLStatement(String statement) {
+        String[] allowedKeywords = {"SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "TRUNCATE"};
+        for (String keyword : allowedKeywords) {
+            if (statement.toUpperCase().contains(keyword)) { return true; }
+        }
+        return false;
     }
 }
