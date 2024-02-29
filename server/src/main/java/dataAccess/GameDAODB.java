@@ -79,7 +79,7 @@ public class GameDAODB implements GameDAOInterface {
     @Override
     public void clearGames() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "DELETE FROM " + "chess_games";
+            String sql = "TRUNCATE TABLE chess_games";
             try (PreparedStatement statement = conn.prepareStatement(sql)) { statement.executeUpdate(); }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }

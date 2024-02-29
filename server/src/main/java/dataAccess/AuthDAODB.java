@@ -55,7 +55,7 @@ public class AuthDAODB  implements AuthDAOInterface {
     @Override
     public void clearAuth() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "DELETE FROM " + "auth_tokens";
+            String sql = "TRUNCATE TABLE auth_tokens";
             try (PreparedStatement statement = conn.prepareStatement(sql)) { statement.executeUpdate(); }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }

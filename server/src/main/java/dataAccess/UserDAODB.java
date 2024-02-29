@@ -42,7 +42,8 @@ public class UserDAODB implements UserDAOInterface {
     @Override
     public void clearUsers() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "DELETE FROM " + "users";
+//            String sql = "DELETE FROM users";
+            String sql = "TRUNCATE TABLE users";
             try (PreparedStatement statement = conn.prepareStatement(sql)) { statement.executeUpdate(); }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
