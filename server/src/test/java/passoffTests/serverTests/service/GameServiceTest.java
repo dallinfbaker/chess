@@ -1,9 +1,9 @@
 package passoffTests.serverTests.service;
 
 import dataAccess.DataAccessException;
-import dataAccess.GameDAODB;
+import dataAccess.databaseDAO.GameDAODB;
 import dataAccess.GameDAOInterface;
-import dataAccess.GameDAOMemory;
+import dataAccess.memoryDAO.GameDAOMemory;
 import chess.ChessGame;
 import model.GameDataRecord;
 import model.GameListRecord;

@@ -68,7 +68,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    static public Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
@@ -78,14 +78,14 @@ public class DatabaseManager {
         }
     }
 
-    static void executeUpdate(String statement, Object... params) throws DataAccessException {
+    static public void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
             prepareStatement(ps, params).executeUpdate();
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
     }
 
-    static <T> Collection<T> executeQuery(String statement, Function<ResultSet, T> builder, Object... params) throws DataAccessException {
+    static public <T> Collection<T> executeQuery(String statement, Function<ResultSet, T> builder, Object... params) throws DataAccessException {
         Collection<T> list = new ArrayList<>();
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
@@ -95,7 +95,7 @@ public class DatabaseManager {
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
     }
 
-    static PreparedStatement prepareStatement(PreparedStatement ps, Object... params) throws SQLException {
+    private static PreparedStatement prepareStatement(PreparedStatement ps, Object... params) throws SQLException {
         for (var i = 0; i < params.length; i++) {
             var param = params[i];
             switch (param) {

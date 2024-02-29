@@ -1,5 +1,8 @@
-package dataAccess;
+package dataAccess.databaseDAO;
 
+import dataAccess.AuthDAOInterface;
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import model.AuthDataRecord;
 
 import java.sql.ResultSet;

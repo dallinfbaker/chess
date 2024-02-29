@@ -1,5 +1,8 @@
-package dataAccess;
+package dataAccess.databaseDAO;
 
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
+import dataAccess.UserDAOInterface;
 import model.UserDataRecord;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

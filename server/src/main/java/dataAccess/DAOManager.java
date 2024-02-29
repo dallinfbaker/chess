@@ -1,5 +1,12 @@
 package dataAccess;
 
+import dataAccess.databaseDAO.AuthDAODB;
+import dataAccess.databaseDAO.GameDAODB;
+import dataAccess.databaseDAO.UserDAODB;
+import dataAccess.memoryDAO.AuthDAOMemory;
+import dataAccess.memoryDAO.GameDAOMemory;
+import dataAccess.memoryDAO.UserDAOMemory;
+
 public class DAOManager {
     public AuthDAOInterface authDAO;
     public UserDAOInterface userDAO;

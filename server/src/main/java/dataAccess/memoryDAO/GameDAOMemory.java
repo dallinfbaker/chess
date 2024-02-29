@@ -1,6 +1,8 @@
-package dataAccess;
+package dataAccess.memoryDAO;
 
 import chess.ChessGame;
+import dataAccess.DataAccessException;
+import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
 import model.GameListRecord;
 
