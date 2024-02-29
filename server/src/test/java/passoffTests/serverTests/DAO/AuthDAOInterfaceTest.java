@@ -2,12 +2,8 @@ package passoffTests.serverTests.DAO;
 
 import dataAccess.AuthDAOInterface;
 import dataAccess.DataAccessException;
-import dataAccess.UserDAOInterface;
 import dataAccess.databaseDAO.AuthDAODB;
-import dataAccess.databaseDAO.UserDAODB;
 import dataAccess.memoryDAO.AuthDAOMemory;
-import dataAccess.memoryDAO.UserDAOMemory;
-import model.AuthDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
