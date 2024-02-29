@@ -2,7 +2,6 @@ package DataAccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthDataRecord;
 import model.GameDataRecord;
 import model.GameListRecord;
 
@@ -12,7 +11,6 @@ import java.util.Collection;
 import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 public class GameDAODB implements GameDAOInterface {
 
