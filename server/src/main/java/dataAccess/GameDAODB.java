@@ -6,8 +6,6 @@ import model.GameDataRecord;
 import model.GameListRecord;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
 
