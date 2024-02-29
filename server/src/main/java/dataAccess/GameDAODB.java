@@ -35,10 +35,9 @@ public class GameDAODB implements GameDAOInterface {
         Collection<GameDataRecord> games = new ArrayList<>();
         String statement = "SELECT * FROM chess_games";
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                ResultSet rs = DatabaseManager.prepareStatement(ps).executeQuery();
-                while (rs.next()) { games.add(buildGame(rs)); }
-            }
+            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
+            ResultSet rs = DatabaseManager.prepareStatement(ps).executeQuery();
+            while (rs.next()) { games.add(buildGame(rs)); }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
         return new GameListRecord(games);
     }
@@ -47,11 +46,10 @@ public class GameDAODB implements GameDAOInterface {
     public GameDataRecord getGame(int gameID) throws DataAccessException {
         String statement = "SELECT game_id, white_player_username, black_player_username, game_name, game_json FROM chess_games WHERE game_id = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                ResultSet rs = DatabaseManager.prepareStatement(ps, gameID).executeQuery();
-                rs.next();
-                return buildGame(rs);
-            }
+            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
+            ResultSet rs = DatabaseManager.prepareStatement(ps, gameID).executeQuery();
+            rs.next();
+            return buildGame(rs);
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 

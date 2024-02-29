@@ -26,10 +26,9 @@ public class UserDAODB implements UserDAOInterface {
     public UserDataRecord getUser(String username) throws DataAccessException {
         String statement = "SELECT username, password, email FROM users WHERE username = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                ResultSet rs = DatabaseManager.prepareStatement(ps, username).executeQuery();
-                return buildUser(rs);
-            }
+            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
+            ResultSet rs = DatabaseManager.prepareStatement(ps, username).executeQuery();
+            return buildUser(rs);
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 
@@ -42,7 +41,6 @@ public class UserDAODB implements UserDAOInterface {
     @Override
     public void clearUsers() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-//            String sql = "DELETE FROM users";
             String sql = "TRUNCATE TABLE users";
             try (PreparedStatement statement = conn.prepareStatement(sql)) { statement.executeUpdate(); }
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }

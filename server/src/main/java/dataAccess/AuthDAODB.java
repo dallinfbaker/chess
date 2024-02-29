@@ -31,10 +31,9 @@ public class AuthDAODB  implements AuthDAOInterface {
     public AuthDataRecord getAuth(String token) throws DataAccessException {
         String statement = "SELECT token, username FROM auth_tokens WHERE token = ?";
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                ResultSet rs = DatabaseManager.prepareStatement(ps, token).executeQuery();
-                return buildAuth(rs);
-            }
+            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
+            ResultSet rs = DatabaseManager.prepareStatement(ps, token).executeQuery();
+            return buildAuth(rs);
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 

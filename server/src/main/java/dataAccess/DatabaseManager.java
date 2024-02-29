@@ -77,9 +77,8 @@ public class DatabaseManager {
 
     static void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                prepareStatement(ps, params).executeUpdate();
-            }
+            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
+            prepareStatement(ps, params).executeUpdate();
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
     }
 
