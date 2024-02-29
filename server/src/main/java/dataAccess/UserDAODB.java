@@ -40,9 +40,6 @@ public class UserDAODB implements UserDAOInterface {
     }
 
     @Override
-    public void createUser(UserDataRecord user) throws DataAccessException { createUser(user.username(), encryptPassword(user.password()), user.email()); }
-
-    @Override
     public void clearUsers() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             String sql = "DELETE FROM " + "users";

@@ -21,11 +21,5 @@ public class UserDAOMemory implements UserDAOInterface {
     }
 
     @Override
-    public void createUser(UserDataRecord user) throws DataAccessException {
-        if (users.containsKey(user.username())) throw new DataAccessException("Error: already taken");
-        users.put(user.username(), user);
-    }
-
-    @Override
     public void clearUsers() { users = new HashMap<>(); }
 }
