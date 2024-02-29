@@ -3,6 +3,7 @@ package service;
 import dataAccess.*;
 import model.AuthDataRecord;
 import model.UserDataRecord;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import server.WebSocket.ResponseException;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class UserService {
             Objects.equals(user.email(), "")
         ) throw new ResponseException(400, "Error: bad request");
         try {
-            daoManager.userDAO.createUser(user);
+            daoManager.userDAO.createUser(user.username(), user.password(), user.email());
             return daoManager.authDAO.createAuthToken(user.username());
         } catch (DataAccessException e) { throw new ResponseException(403, "Error: already exists"); }
     }
@@ -29,8 +30,9 @@ public class UserService {
     public AuthDataRecord login(UserDataRecord user) throws ResponseException {
         try {
             UserDataRecord other = daoManager.userDAO.getUser(user.username());
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             if (other == null) throw new ResponseException(401, "Error: unauthorized");
-            else if (!Objects.equals(other.password(), user.password())) throw new ResponseException(401, "Error: unauthorized");
+            else if (!encoder.matches(user.password(), other.password())) throw new ResponseException(401, "Error: unauthorized");
             else return daoManager.authDAO.createAuthToken(user.username());
         } catch (DataAccessException e) { throw new ResponseException(401, "Error: unauthorized"); }
     }
