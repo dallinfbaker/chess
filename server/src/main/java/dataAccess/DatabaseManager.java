@@ -1,9 +1,5 @@
 package dataAccess;
 
-import model.AuthDataRecord;
-import model.GameDataRecord;
-import model.UserDataRecord;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,13 +43,28 @@ public class DatabaseManager {
     static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-            var conn = DriverManager.getConnection(connectionUrl, user, password);
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+            var conn = getConnection();
+            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
+            statement = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
+                    "    token VARCHAR(50) PRIMARY KEY," +
+                    "    username VARCHAR(50)" +
+                    ");";
+            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
+            statement = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
+                    "    game_id int PRIMARY KEY," +
+                    "    white_player_username VARCHAR(50)," +
+                    "    black_player_username VARCHAR(50)," +
+                    "    game_name VARCHAR(50)," +
+                    "    game_json json" +
+                    ");";
+            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
+            statement = "CREATE TABLE IF NOT EXISTS users (" +
+                    "    username VARCHAR(50) PRIMARY KEY," +
+                    "    email VARCHAR(100)," +
+                    "    password VARCHAR(100)" +
+                    ");";
+            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
+        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 
     /**
@@ -79,15 +90,17 @@ public class DatabaseManager {
     }
 
     static public void executeUpdate(String statement, Object... params) throws DataAccessException {
-        if (!isValidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
+        if (isInvalidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         try (var conn = getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
-            prepareStatement(ps, params).executeUpdate();
+            try (PreparedStatement ps = conn.prepareStatement(statement,
+                    RETURN_GENERATED_KEYS)) {
+                prepareStatement(ps, params).executeUpdate();
+            }
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
     }
 
     static public <T> Collection<T> executeQuery(String statement, Function<ResultSet, T> builder, Object... params) throws DataAccessException {
-        if (!isValidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
+        if (isInvalidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         Collection<T> list = new ArrayList<>();
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
@@ -103,9 +116,6 @@ public class DatabaseManager {
             switch (param) {
                 case String p -> ps.setString(i + 1, p);
                 case Integer p -> ps.setInt(i + 1, p);
-                case UserDataRecord p -> ps.setString(i + 1, p.toString());
-                case GameDataRecord p -> ps.setString(i + 1, p.toString());
-                case AuthDataRecord p -> ps.setString(i + 1, p.toString());
                 case null -> ps.setNull(i + 1, NULL);
                 default -> {}
             }
@@ -113,11 +123,11 @@ public class DatabaseManager {
         return ps;
     }
 
-    private static boolean isValidSQLStatement(String statement) {
+    private static boolean isInvalidSQLStatement(String statement) {
         String[] allowedKeywords = {"SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "TRUNCATE"};
         for (String keyword : allowedKeywords) {
-            if (statement.toUpperCase().contains(keyword)) { return true; }
+            if (statement.toUpperCase().contains(keyword)) { return false; }
         }
-        return false;
+        return true;
     }
 }

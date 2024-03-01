@@ -40,6 +40,7 @@ public class GameDAODB implements GameDAOInterface {
 
     @Override
     public GameDataRecord getGame(int gameID) throws DataAccessException {
+//        DatabaseManager.executeUpdate("select", "game_id, white_player_username, black_player_username, game_name, game_json", "from", "chess_game", "where", "game_id = ?");
         String statement = "SELECT game_id, white_player_username, black_player_username, game_name, game_json FROM chess_games WHERE game_id = ?";
         try { return (GameDataRecord) DatabaseManager.executeQuery(statement, buildGame, gameID).toArray()[0]; }
         catch (ArrayIndexOutOfBoundsException e) { throw new DataAccessException(e.getMessage()); }
