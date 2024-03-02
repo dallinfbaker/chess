@@ -5,6 +5,7 @@ import dataAccess.DatabaseManager;
 import dataAccess.UserDAOInterface;
 import dataAccess.databaseDAO.UserDAODB;
 import dataAccess.memoryDAO.UserDAOMemory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAOInterfaceTest {
 
-    UserDAOInterfaceTest() throws DataAccessException { DatabaseManager.createDatabase(); }
-
+    @BeforeAll
+    static void setUpBefore() {
+        try { DatabaseManager.createDatabase(); }
+        catch(DataAccessException e) { e.printStackTrace(); }
+    }
 
     boolean database = true;
     private UserDAOInterface dao;

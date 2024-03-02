@@ -18,10 +18,7 @@ public class Server {
     private final WebSocketHandler webSocketHandler = new WebSocketHandler();
 
 
-    public Server() {
-        try { DatabaseManager.createDatabase(); }
-        catch (DataAccessException ignored) {}
-    }
+    public Server() {}
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

@@ -8,6 +8,7 @@ import dataAccess.databaseDAO.GameDAODB;
 import dataAccess.memoryDAO.GameDAOMemory;
 import model.GameDataRecord;
 import model.GameListRecord;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameDAOInterfaceTest {
 
-    GameDAOInterfaceTest() throws DataAccessException { DatabaseManager.createDatabase(); }
+    @BeforeAll
+    static void setUpBefore() {
+        try { DatabaseManager.createDatabase(); }
+        catch(DataAccessException e) { e.printStackTrace(); }
+    }
 
     boolean database = true;
     private GameDAOInterface dao;
