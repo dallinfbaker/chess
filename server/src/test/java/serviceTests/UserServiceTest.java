@@ -1,4 +1,4 @@
-package passoffTests.serverTests.service;
+package serviceTests;
 
 import dataAccess.DAOManager;
 import dataAccess.DataAccessException;

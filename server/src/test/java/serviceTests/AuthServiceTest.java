@@ -1,4 +1,4 @@
-package passoffTests.serverTests.service;
+package serviceTests;
 
 import dataAccess.memoryDAO.AuthDAOMemory;
 import org.junit.jupiter.api.BeforeEach;

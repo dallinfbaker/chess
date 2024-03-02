@@ -1,4 +1,4 @@
-package passoffTests.serverTests.DAO;
+package dataAccessTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
