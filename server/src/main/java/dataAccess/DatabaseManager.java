@@ -41,31 +41,44 @@ public class DatabaseManager {
      * Creates the database if it does not already exist.
      */
     static public void createDatabase() throws DataAccessException {
-        try {
-            var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-            var conn = DriverManager.getConnection(connectionUrl, user, password);
-            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
-            conn = getConnection();
-            statement = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
-                    "    token VARCHAR(50) PRIMARY KEY," +
-                    "    username VARCHAR(50) NOT NULL" +
-                    ");";
-            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
-            statement = "CREATE TABLE IF NOT EXISTS chess_games (" +
-                    "    game_id int PRIMARY KEY," +
-                    "    white_player_username VARCHAR(50)," +
-                    "    black_player_username VARCHAR(50)," +
-                    "    game_name VARCHAR(50) NOT NULL," +
-                    "    game_json json NOT NULL" +
-                    ");";
-            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
-            statement = "CREATE TABLE IF NOT EXISTS users (" +
-                    "    username VARCHAR(50) PRIMARY KEY," +
-                    "    email VARCHAR(100) NOT NULL," +
-                    "    password VARCHAR(100) NOT NULL" +
-                    ");";
-            try (var preparedStatement = conn.prepareStatement(statement)) { preparedStatement.executeUpdate(); }
-        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
+        try { getConnection(); }
+        catch (DataAccessException ignored) {
+            try {
+                var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
+                var conn = DriverManager.getConnection(connectionUrl, user, password);
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+                conn = getConnection();
+                statement = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
+                        "    token VARCHAR(50) PRIMARY KEY," +
+                        "    username VARCHAR(50) NOT NULL" +
+                        ");";
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+                statement = "CREATE TABLE IF NOT EXISTS chess_games (" +
+                        "    game_id int PRIMARY KEY," +
+                        "    white_player_username VARCHAR(50)," +
+                        "    black_player_username VARCHAR(50)," +
+                        "    game_name VARCHAR(50) NOT NULL," +
+                        "    game_json json NOT NULL" +
+                        ");";
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+                statement = "CREATE TABLE IF NOT EXISTS users (" +
+                        "    username VARCHAR(50) PRIMARY KEY," +
+                        "    email VARCHAR(100) NOT NULL," +
+                        "    password VARCHAR(100) NOT NULL" +
+                        ");";
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            } catch (SQLException e) {
+                throw new DataAccessException(e.getMessage());
+            }
+        }
     }
 
     /**
