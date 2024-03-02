@@ -1,6 +1,7 @@
 package dataAccessTests;
 
 import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import dataAccess.UserDAOInterface;
 import dataAccess.databaseDAO.UserDAODB;
 import dataAccess.memoryDAO.UserDAOMemory;
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAOInterfaceTest {
+
+    UserDAOInterfaceTest() throws DataAccessException { DatabaseManager.createDatabase(); }
+
 
     boolean database = true;
     private UserDAOInterface dao;

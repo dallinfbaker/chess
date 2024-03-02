@@ -2,6 +2,7 @@ package dataAccessTests;
 
 import chess.ChessGame;
 import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import dataAccess.GameDAOInterface;
 import dataAccess.databaseDAO.GameDAODB;
 import dataAccess.memoryDAO.GameDAOMemory;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameDAOInterfaceTest {
+
+    GameDAOInterfaceTest() throws DataAccessException { DatabaseManager.createDatabase(); }
 
     boolean database = true;
     private GameDAOInterface dao;
