@@ -4,7 +4,7 @@ import dataAccess.*;
 import model.AuthDataRecord;
 import model.UserDataRecord;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import server.WebSocket.ResponseException;
+import exception.ResponseException;
 import java.util.Objects;
 
 public class UserService {

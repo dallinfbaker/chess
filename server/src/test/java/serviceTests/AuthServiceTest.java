@@ -3,7 +3,7 @@ package serviceTests;
 import dataAccess.memoryDAO.AuthDAOMemory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.WebSocket.ResponseException;
+import exception.ResponseException;
 import service.AuthService;
 
 import static org.junit.jupiter.api.Assertions.*;

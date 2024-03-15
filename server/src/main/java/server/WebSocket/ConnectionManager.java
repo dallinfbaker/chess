@@ -1,6 +1,8 @@
 package server.WebSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.Notification;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;

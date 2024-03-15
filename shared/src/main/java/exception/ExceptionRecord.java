@@ -1,3 +1,3 @@
-package server;
+package exception;
 
 public record ExceptionRecord(String message) {}

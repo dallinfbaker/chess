@@ -4,7 +4,7 @@ import dataAccess.DataAccessException;
 import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
 import model.GameListRecord;
-import server.WebSocket.ResponseException;
+import exception.ResponseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

@@ -5,7 +5,7 @@ import dataAccess.DataAccessException;
 import model.UserDataRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.WebSocket.ResponseException;
+import exception.ResponseException;
 import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;

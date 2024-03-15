@@ -1,4 +1,4 @@
-package server.WebSocket;
+package exception;
 
 public class ResponseException extends Exception {
     final private int statusCode;

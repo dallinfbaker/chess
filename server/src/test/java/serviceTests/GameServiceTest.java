@@ -9,7 +9,7 @@ import model.GameDataRecord;
 import model.GameListRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.WebSocket.ResponseException;
+import exception.ResponseException;
 import service.GameService;
 
 import static org.junit.jupiter.api.Assertions.*;

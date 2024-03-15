@@ -2,6 +2,7 @@ package server;
 
 import dataAccess.*;
 import com.google.gson.*;
+import exception.*;
 import model.*;
 import server.WebSocket.*;
 import service.*;
