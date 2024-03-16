@@ -1,6 +1,10 @@
 package ui;
 
 import exception.ResponseException;
+import model.AuthDataRecord;
+import model.GameDataRecord;
+import model.GameListRecord;
+import model.UserDataRecord;
 import ui.webSocket.NotificationHandler;
 
 import java.net.http.WebSocket;
@@ -8,6 +12,7 @@ import java.util.Arrays;
 
 public class Client {
     private String userName = null;
+    private String authToken;
     private final ServerFacade server;
     private final String serverURL;
     private final NotificationHandler notificationHandler;
@@ -29,9 +34,7 @@ public class Client {
                 case SIGNEDIN -> postLoginEval(cmd, params);
                 case SIGNEDOUT -> preLoginEval(cmd, params);
             };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
-        }
+        } catch (ResponseException e) { return e.getMessage(); }
     }
     private String preLoginEval(String cmd, String... params) throws ResponseException {
         return switch (cmd) {
@@ -43,9 +46,9 @@ public class Client {
     }
     private String postLoginEval(String cmd, String... params) throws ResponseException {
         return switch (cmd) {
-            case "logout" -> login(params);
+            case "logout" -> logout();
             case "create" -> createGame(params);
-            case "list" -> listGames(params);
+            case "list" -> listGames();
             case "join" -> joinGame(params);
             case "observe" -> joinObserver(params);
             default -> help();
@@ -53,25 +56,56 @@ public class Client {
     }
 
     public String login(String... params) throws ResponseException {
-        return "";
+        try {
+            userName = params[0];
+            UserDataRecord user = new UserDataRecord(userName, params[1], "");
+            authToken = server.login(user).authToken();
+            return authToken;
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String register(String... params) throws ResponseException {
-        return "";
+        try {
+            userName = params[0];
+            UserDataRecord user = new UserDataRecord(userName, params[1], "");
+            authToken = server.registerUser(user).authToken();
+            return authToken;
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
-    public String logout(String... params) throws ResponseException {
-        return "";
+    public String logout() throws ResponseException {
+        try {
+            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
+            server.logout(auth);
+            return "";
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String createGame(String... params) throws ResponseException {
-        return "";
+        try {
+            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
+            GameDataRecord game = new GameDataRecord(0, null, null, params[0], null);
+            int gameID = server.createGame(auth, game);
+            return String.format("%d", gameID);
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
-    public String listGames(String... params) throws ResponseException {
-        return "";
+    public String listGames() throws ResponseException {
+        try {
+            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
+            GameListRecord games = server.listGames(auth);
+            return games.toString();
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String joinGame(String... params) throws ResponseException {
-        return "";
+        try {
+            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
+            int gameID = server.joinGame(auth, new JoinGameData(Integer.parseInt(params[0]), params[1]));
+            return String.format("%d", gameID);
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String joinObserver(String... params) throws ResponseException {
-        return "";
+        try {
+            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
+            int gameID = server.joinGame(auth, new JoinGameData(Integer.parseInt(params[0]), ""));
+            return String.format("%d", gameID);
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
 
     public String help() throws ResponseException {
@@ -88,6 +122,7 @@ public class Client {
             list - games
             join <ID> [WHITE|BLACK|<empty>] - a game
             observe <ID> - a game
+            logout - when you are done
             quit - playing chess
             help - with possible commands
             """;

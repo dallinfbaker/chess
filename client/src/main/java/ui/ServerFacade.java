@@ -19,9 +19,7 @@ import java.util.Objects;
 public class ServerFacade {
     private final String serverURL;
 
-    ServerFacade(String url, String port) {
-        serverURL = url + ":" + port;
-    }
+    ServerFacade(String url, String port) { serverURL = url + ":" + port; }
 
     public void clearDatabase() throws ResponseException {
         var path = "/db";
