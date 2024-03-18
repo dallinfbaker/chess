@@ -51,6 +51,7 @@ public class Client {
             case "list" -> listGames();
             case "join" -> joinGame(params);
             case "observe" -> joinObserver(params);
+            case "quit" -> "quit";
             default -> help();
         };
     }
