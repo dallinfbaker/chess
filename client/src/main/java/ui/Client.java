@@ -8,22 +8,67 @@ import model.UserDataRecord;
 import ui.webSocket.NotificationHandler;
 
 import java.net.http.WebSocket;
-import java.util.Arrays;
+import java.util.*;
 
 public class Client {
     private String userName = null;
     private String authToken;
-    private final ServerFacade server;
+    private ServerFacade server = null;
     private final String serverURL;
+    private final String port;
     private final NotificationHandler notificationHandler;
     private WebSocket ws;
     private State state = State.SIGNEDOUT;
 
     public Client (String URL, NotificationHandler nh, String port) {
         serverURL = URL;
-        server = new ServerFacade(serverURL, port);
+        this.port = port;
         notificationHandler = nh;
     }
+
+    public Collection<String> getInput() {
+        ArrayList<String> output = new ArrayList<>();
+        System.out.printf("%n>>> ");
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+        output.add(line.toLowerCase().split(" ")[0]);
+        output.add(eval(line));
+        return output;
+    }
+
+    public void preLogin() {
+        while (true) {
+            Iterator<String> inputs = getInput().iterator();
+            String output = inputs.next();
+            String input = inputs.next();
+            System.out.printf("%s%n", output);
+            if (Objects.equals(output, "quit")) {
+                System.out.print("exit program");
+                break;
+            }
+            if (Objects.equals(input, "login") || Objects.equals(input, "register")) { postLogin(); }
+        }
+    }
+
+    public void postLogin() {
+        while (true) {
+            Iterator<String> inputs = getInput().iterator();
+            String output = inputs.next();
+            String input = inputs.next();
+            System.out.printf("%s%n", output);
+            if (Objects.equals(input, "logout")) {
+                System.out.print(output);
+                break;
+            }
+            if (Objects.equals(input, "observe") || Objects.equals(input, "join")) { gamePlay(); }
+        }
+    }
+
+    public void gamePlay() {
+
+    }
+
+    private void connect() { if (!Objects.isNull(server)) server = new ServerFacade(serverURL, port); }
 
     public String eval(String input) {
         try {
@@ -57,6 +102,7 @@ public class Client {
     }
 
     public String login(String... params) throws ResponseException {
+        connect();
         try {
             userName = params[0];
             UserDataRecord user = new UserDataRecord(userName, params[1], "");
@@ -66,6 +112,7 @@ public class Client {
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String register(String... params) throws ResponseException {
+        connect();
         try {
             userName = params[0];
             UserDataRecord user = new UserDataRecord(userName, params[1], params[2]);
