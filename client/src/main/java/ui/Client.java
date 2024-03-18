@@ -60,6 +60,7 @@ public class Client {
             userName = params[0];
             UserDataRecord user = new UserDataRecord(userName, params[1], "");
             authToken = server.login(user).authToken();
+            state = State.SIGNEDIN;
             return authToken;
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
@@ -75,6 +76,7 @@ public class Client {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             server.logout(auth);
+            state = State.SIGNEDOUT;
             return "";
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
