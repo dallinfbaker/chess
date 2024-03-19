@@ -7,7 +7,6 @@ import java.util.Scanner;
 public class MainClient {
 
     public static void main(String[] args) {
-//        var serverUrl = "http://localhost:8080";
 
         Client client = new Client("http://localhost", new NotificationHandler(), "8080");
 

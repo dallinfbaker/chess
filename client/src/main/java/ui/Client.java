@@ -10,6 +10,8 @@ import ui.webSocket.NotificationHandler;
 import java.net.http.WebSocket;
 import java.util.*;
 
+import static model.EscapeSequences.SET_BG_COLOR_BLACK;
+
 public class Client {
     private String userName = null;
     private String authToken;
@@ -37,10 +39,11 @@ public class Client {
     }
 
     public void preLogin() {
+//        System.out.print(SET_BG_COLOR_BLACK);
         while (true) {
             Iterator<String> inputs = getInput().iterator();
-            String output = inputs.next();
             String input = inputs.next();
+            String output = inputs.next();
             System.out.printf("%s%n", output);
             if (Objects.equals(output, "quit")) {
                 System.out.print("exit program");
@@ -53,8 +56,8 @@ public class Client {
     public void postLogin() {
         while (true) {
             Iterator<String> inputs = getInput().iterator();
-            String output = inputs.next();
             String input = inputs.next();
+            String output = inputs.next();
             System.out.printf("%s%n", output);
             if (Objects.equals(input, "logout")) {
                 System.out.print(output);
@@ -68,7 +71,7 @@ public class Client {
 
     }
 
-    private void connect() { if (!Objects.isNull(server)) server = new ServerFacade(serverURL, port); }
+    private void connect() { if (Objects.isNull(server)) server = new ServerFacade(serverURL, port); }
 
     public String eval(String input) {
         try {

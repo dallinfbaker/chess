@@ -14,7 +14,10 @@ public class ChessBoard {
     private ChessPiece whiteKing;
     private ChessPiece blackKing;
     private ChessPiece removedPiece;
-    public ChessBoard() { board = new ChessPiece[8][8]; }
+    public ChessBoard() {
+        board = new ChessPiece[8][8];
+        resetBoard();
+    }
 
     public ChessPiece getKing(ChessGame.TeamColor color) {
         return color == ChessGame.TeamColor.WHITE ? whiteKing : blackKing;

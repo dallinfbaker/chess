@@ -93,6 +93,7 @@ class GameServiceTest {
         assertSame(GameListRecord.class, service.listGames().getClass());
         assertEquals(4, service.listGames().games().size());
         assertDoesNotThrow(() -> service.listGames().games());
+        System.out.print(service.listGames().toString());
     }
 
     @Test
