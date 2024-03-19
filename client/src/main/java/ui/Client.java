@@ -10,8 +10,6 @@ import ui.webSocket.NotificationHandler;
 import java.net.http.WebSocket;
 import java.util.*;
 
-import static model.EscapeSequences.SET_BG_COLOR_BLACK;
-
 public class Client {
     private String userName = null;
     private String authToken;
