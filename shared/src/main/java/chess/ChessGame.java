@@ -16,6 +16,7 @@ public class ChessGame {
     private ChessPiece enPassantVulnerable = null;
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
         setTeamTurn(TeamColor.WHITE);
         pieceCounter = new HashMap<>();
         pieceCounter.put(TeamColor.WHITE, 16);

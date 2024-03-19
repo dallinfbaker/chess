@@ -23,6 +23,8 @@ public class GameDAOMemory implements GameDAOInterface {
 
     public int createGameData(String gameName) {
         int id = generateID();
+//        ChessGame game = new ChessGame();
+//        game.
         GameDataRecord gameData = new GameDataRecord(id, null, null, gameName, new ChessGame());
         games.put(id, gameData);
         return id;

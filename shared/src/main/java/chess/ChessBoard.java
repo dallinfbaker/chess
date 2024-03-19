@@ -14,14 +14,9 @@ public class ChessBoard {
     private ChessPiece whiteKing;
     private ChessPiece blackKing;
     private ChessPiece removedPiece;
-    public ChessBoard() {
-        board = new ChessPiece[8][8];
-        resetBoard();
-    }
+    public ChessBoard() { board = new ChessPiece[8][8]; }
 
-    public ChessPiece getKing(ChessGame.TeamColor color) {
-        return color == ChessGame.TeamColor.WHITE ? whiteKing : blackKing;
-    }
+    public ChessPiece getKing(ChessGame.TeamColor color) { return color == ChessGame.TeamColor.WHITE ? whiteKing : blackKing; }
 
     /**
      * Adds a chess piece to the chessboard
