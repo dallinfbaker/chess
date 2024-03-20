@@ -28,7 +28,7 @@ public class GameService {
         String user;
         try { gameData = gameDAO.getGame(gameID); }
         catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
-        if (Objects.equals(playerColor, "WHITE")) {
+        if (Objects.equals(playerColor.toUpperCase(), "WHITE")) {
             try {
                 user = gameData.whiteUsername();
                 if (Objects.isNull(user)) gameDAO.setWhiteUsername(gameID, username);

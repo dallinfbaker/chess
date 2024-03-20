@@ -98,16 +98,13 @@ public class DatabaseManager {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
             return conn;
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
 
     static public void executeUpdate(String statement, Object... params) throws DataAccessException {
         if (isInvalidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         try (var conn = getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement,
-                    RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 prepareStatement(ps, params).executeUpdate();
             }
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
