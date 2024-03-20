@@ -14,12 +14,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 
 public class ServerFacade {
     private final String serverURL;
 
-    ServerFacade(String url, String port) { serverURL = url + ":" + port; }
+    public ServerFacade(String url, String port) { serverURL = url + ":" + port; }
 
     public void clearDatabase() throws ResponseException {
         var path = "/db";
@@ -41,13 +42,14 @@ public class ServerFacade {
         var path = "/game";
         return makeRequest("GET", path, auth.authToken(), null, GameListRecord.class);
     }
-    public int createGame(AuthDataRecord auth, GameDataRecord game) throws ResponseException {
+    public double createGame(AuthDataRecord auth, GameDataRecord game) throws ResponseException {
         var path = "/game";
-        return makeRequest("POST", path, auth.authToken(), game, int.class);
+//        Map<> output
+        return (Double) makeRequest("POST", path, auth.authToken(), game, Map.class).get("gameID");
     }
-    public int joinGame(AuthDataRecord auth, JoinGameData game) throws ResponseException {
+    public void joinGame(AuthDataRecord auth, JoinGameData game) throws ResponseException {
         var path = "/game";
-        return makeRequest("PUT", path, auth.authToken(), game, int.class);
+        makeRequest("PUT", path, auth.authToken(), game, null);
     }
 
     private <T> T makeRequest(String method, String path, String auth, Object request, Class<T> responseClass) throws ResponseException {

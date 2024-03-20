@@ -1,10 +1,7 @@
 package ui;
 
 import exception.ResponseException;
-import model.AuthDataRecord;
-import model.GameDataRecord;
-import model.GameListRecord;
-import model.UserDataRecord;
+import model.*;
 import ui.webSocket.NotificationHandler;
 
 import java.net.http.WebSocket;
@@ -18,7 +15,8 @@ public class Client {
     private final String port;
     private final NotificationHandler notificationHandler;
     private WebSocket ws;
-    private State state = State.SIGNEDOUT;
+    private State state = State.signedOut;
+    private HashMap<Integer, GameDataRecord> gameList;
 
     public Client (String URL, NotificationHandler nh, String port) {
         serverURL = URL;
@@ -37,36 +35,46 @@ public class Client {
     }
 
     public void preLogin() {
-//        System.out.print(SET_BG_COLOR_BLACK);
-        while (true) {
+        state = State.signedOut;
+        String input, output;
+        do {
             Iterator<String> inputs = getInput().iterator();
-            String input = inputs.next();
-            String output = inputs.next();
+            input = inputs.next();
+            output = inputs.next();
             System.out.printf("%s%n", output);
-            if (Objects.equals(output, "quit")) {
-                System.out.print("exit program");
-                break;
+            if (Objects.equals(input, "login") || Objects.equals(input, "register")) {
+                output = postLogin();
+                state = State.signedOut;
             }
-            if (Objects.equals(input, "login") || Objects.equals(input, "register")) { postLogin(); }
-        }
+            if (Objects.equals(output, "quit")) { break; }
+        } while (!Objects.equals(output, "quit"));
+        System.out.print("exit program");
     }
-
-    public void postLogin() {
-        while (true) {
+    public String postLogin() {
+        state = State.signedIn;
+        String input, output;
+        do {
             Iterator<String> inputs = getInput().iterator();
-            String input = inputs.next();
-            String output = inputs.next();
+            input = inputs.next();
+            output = inputs.next();
             System.out.printf("%s%n", output);
-            if (Objects.equals(input, "logout")) {
-                System.out.print(output);
-                break;
+            if (Objects.equals(input, "observe") || Objects.equals(input, "join")) {
+                output = gamePlay();
+                state = State.signedIn;
             }
-            if (Objects.equals(input, "observe") || Objects.equals(input, "join")) { gamePlay(); }
-        }
+        } while (!Objects.equals(input, "logout") && !Objects.equals(output, "quit"));
+        return output;
     }
-
-    public void gamePlay() {
-
+    public String gamePlay() {
+        state = State.playing;
+        String input, output;
+        do {
+            Iterator<String> inputs = getInput().iterator();
+            input = inputs.next();
+            output = inputs.next();
+            System.out.printf("%s%n", output);
+        } while (!Objects.equals(input, "leave") && !Objects.equals(output, "quit"));
+        return output;
     }
 
     private void connect() { if (Objects.isNull(server)) server = new ServerFacade(serverURL, port); }
@@ -77,8 +85,9 @@ public class Client {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (state) {
-                case SIGNEDIN -> postLoginEval(cmd, params);
-                case SIGNEDOUT -> preLoginEval(cmd, params);
+                case signedIn -> postLoginEval(cmd, params);
+                case signedOut -> preLoginEval(cmd, params);
+                case playing -> gamePlayEval(cmd, params);
             };
         } catch (ResponseException e) { return e.getMessage(); }
     }
@@ -96,7 +105,15 @@ public class Client {
             case "create" -> createGame(params);
             case "list" -> listGames();
             case "join" -> joinGame(params);
-            case "observe" -> joinObserver(params);
+            case "observe" -> joinGame(params);
+            case "quit" -> "quit";
+            default -> help();
+        };
+    }
+    private String gamePlayEval(String cmd, String... params) throws ResponseException {
+        return switch (cmd) {
+            case "move" -> makeMove(params);
+            case "leave" -> leaveGame(params);
             case "quit" -> "quit";
             default -> help();
         };
@@ -108,7 +125,6 @@ public class Client {
             userName = params[0];
             UserDataRecord user = new UserDataRecord(userName, params[1], "");
             authToken = server.login(user).authToken();
-            state = State.SIGNEDIN;
             return "Logged in";
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
@@ -125,7 +141,6 @@ public class Client {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             server.logout(auth);
-            state = State.SIGNEDOUT;
             return "Logged out";
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
@@ -133,47 +148,76 @@ public class Client {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             GameDataRecord game = new GameDataRecord(0, null, null, params[0], null);
-            int gameID = server.createGame(auth, game);
-            return String.format("Created game %d", gameID);
+            double gameID = server.createGame(auth, game);
+            return String.format("Created game %d", (int) gameID);
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String listGames() throws ResponseException {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             GameListRecord games = server.listGames(auth);
-            return games.toString();
+            gameList = new HashMap<>();
+            StringBuilder output = new StringBuilder();
+            output.append("games:\n\n");
+            int i = 1;
+            for (GameDataRecord data : games.games()) {
+                output.append("game number: ").append(i).append("\n");
+                output.append("game name: ").append(data.gameName()).append("\n");
+                output.append("white player: ").append(data.whiteUsername()).append("\n");
+                output.append("black player: ").append(data.blackUsername()).append("\n\n");
+                gameList.put(i++, data);
+            }
+            return output.toString();
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String joinGame(String... params) throws ResponseException {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
-            int gameID = server.joinGame(auth, new JoinGameData(Integer.parseInt(params[0]), params[1]));
-            return String.format("Joined game: %d", gameID);
+            int gameId = gameList.get(Integer.parseInt(params[0])).gameID();
+            StringBuilder output = new StringBuilder();
+            try {
+                server.joinGame(auth, new JoinGameData(gameId, params[1]));
+                output.append("Joined");
+            } catch (IndexOutOfBoundsException e) {
+                server.joinGame(auth, new JoinGameData(gameId, null));
+                output.append("Observing");
+            }
+            output.append(" game: ").append(gameList.get(Integer.parseInt(params[0])).gameName()).append("\n");
+            output.append(DrawChessBoard.drawBoard(gameList.get(Integer.parseInt(params[0])).game().getBoard(), false));
+            output.append(DrawChessBoard.drawBoard(gameList.get(Integer.parseInt(params[0])).game().getBoard(), true));
+            return output.toString();
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
-    public String joinObserver(String... params) throws ResponseException {
-        try {
-            AuthDataRecord auth = new AuthDataRecord(authToken, userName);
-            int gameID = server.joinGame(auth, new JoinGameData(Integer.parseInt(params[0]), ""));
-            return String.format("Observing game: %d", gameID);
-        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
+    public String makeMove(String... params) throws ResponseException {
+        return "lol, you really thought you could move? amateur";
+    }
+    public String leaveGame(String... params) throws ResponseException {
+        return "Left game";
     }
 
-    public String help(){
-        if (state == State.SIGNEDOUT) return """
+    public String help() {
+        return switch (state) {
+            case signedIn -> """
+                create <NAME> - a game
+                list - games
+                join <ID> [WHITE|BLACK|<empty>] - a game
+                observe <ID> - a game
+                logout - when you are done
+                quit - playing chess
+                help - with possible commands
+                """;
+            case signedOut -> """
                 register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                 login <USERNAME> <PASSWORD> - to play chess
                 quit - playing chess
                 help - with possible commands
                 """;
-        return """
-            create <NAME> - a game
-            list - games
-            join <ID> [WHITE|BLACK|<empty>] - a game
-            observe <ID> - a game
-            logout - when you are done
-            quit - playing chess
-            help - with possible commands
-            """;
+            case playing -> """
+                move <START POSITION> <END POSITION> - to move a piece
+                leave - to leave game
+                quit - playing chess
+                help - with possible commands
+                """;
+        };
     }
 }
