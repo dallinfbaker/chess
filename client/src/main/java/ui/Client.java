@@ -16,7 +16,7 @@ public class Client {
     private final NotificationHandler notificationHandler;
     private WebSocket ws;
     private State state = State.signedOut;
-    private Map<Integer, GameDataRecord> gameList;// = new HashMap<>();
+    private Map<Integer, GameDataRecord> gameList = new HashMap<>();
 
     public Client (String URL, NotificationHandler nh, String port) {
         serverURL = URL;
@@ -58,7 +58,7 @@ public class Client {
             input = inputs.next();
             output = inputs.next();
             System.out.printf("%s%n", output);
-            if (Objects.equals(input, "observe") || Objects.equals(input, "join")) {
+            if ((Objects.equals(input, "observe") || Objects.equals(input, "join")) && Objects.equals(output.split(" ")[1], "game:")) {
                 output = gamePlay();
                 state = State.signedIn;
             }
