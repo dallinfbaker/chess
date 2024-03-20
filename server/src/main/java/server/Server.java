@@ -4,6 +4,7 @@ import dataAccess.*;
 import com.google.gson.*;
 import exception.*;
 import model.*;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import server.WebSocket.*;
 import service.*;
 import spark.*;
@@ -126,5 +127,10 @@ public class Server {
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
+    }
+
+    @OnWebSocketMessage
+    public void messageReceived() {
+
     }
 }

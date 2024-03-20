@@ -3,6 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.*;
 import ui.webSocket.NotificationHandler;
+import ui.webSocket.WebSocketFacade;
 
 import java.net.http.WebSocket;
 import java.util.*;
@@ -14,7 +15,7 @@ public class Client {
     private final String serverURL;
     private final String port;
     private final NotificationHandler notificationHandler;
-    private WebSocket ws;
+    private WebSocketFacade ws;
     private State state = State.signedOut;
     private Map<Integer, GameDataRecord> gameList = new HashMap<>();
 
@@ -67,6 +68,10 @@ public class Client {
     }
     public String gamePlay() {
         state = State.playing;
+        try {
+            ws = new WebSocketFacade(serverURL + ":" + port, notificationHandler);
+        } catch (ResponseException ignored) {}
+
         String input, output;
         do {
             Iterator<String> inputs = getInput().iterator();

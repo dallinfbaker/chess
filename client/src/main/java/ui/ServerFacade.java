@@ -77,7 +77,8 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
-        if (!isSuccessful(status)) { throw new ResponseException(status, "failure: " + status); }
+        var message = http.getResponseMessage();
+        if (!isSuccessful(status)) { throw new ResponseException(status, "failure: " + status + " - " + message); }
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
