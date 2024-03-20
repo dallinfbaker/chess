@@ -16,7 +16,7 @@ public class Client {
     private final NotificationHandler notificationHandler;
     private WebSocket ws;
     private State state = State.signedOut;
-    private HashMap<Integer, GameDataRecord> gameList;
+    private Map<Integer, GameDataRecord> gameList;// = new HashMap<>();
 
     public Client (String URL, NotificationHandler nh, String port) {
         serverURL = URL;
@@ -148,17 +148,18 @@ public class Client {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             GameDataRecord game = new GameDataRecord(0, null, null, params[0], null);
-            double gameID = server.createGame(auth, game);
-            return String.format("Created game %d", (int) gameID);
+            server.createGame(auth, game);
+            gameList.put(gameList.size() + 1, game);
+            return String.format("Created game %s", params[0]);
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public String listGames() throws ResponseException {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             GameListRecord games = server.listGames(auth);
-            gameList = new HashMap<>();
             StringBuilder output = new StringBuilder();
             output.append("games:\n\n");
+            gameList = new HashMap<>();
             int i = 1;
             for (GameDataRecord data : games.games()) {
                 output.append("game number: ").append(i).append("\n");

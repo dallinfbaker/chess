@@ -42,10 +42,9 @@ public class ServerFacade {
         var path = "/game";
         return makeRequest("GET", path, auth.authToken(), null, GameListRecord.class);
     }
-    public double createGame(AuthDataRecord auth, GameDataRecord game) throws ResponseException {
+    public void createGame(AuthDataRecord auth, GameDataRecord game) throws ResponseException {
         var path = "/game";
-//        Map<> output
-        return (Double) makeRequest("POST", path, auth.authToken(), game, Map.class).get("gameID");
+        makeRequest("POST", path, auth.authToken(), game, Map.class).get("gameID");
     }
     public void joinGame(AuthDataRecord auth, JoinGameData game) throws ResponseException {
         var path = "/game";
