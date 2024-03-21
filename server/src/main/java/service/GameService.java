@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessMove;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
@@ -51,5 +52,8 @@ public class GameService {
     public GameListRecord listGames() throws ResponseException {
         try { return gameDAO.getGames(); }
         catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
+    }
+    public void makeMove(int gameID, String username, ChessMove move) {
+
     }
 }

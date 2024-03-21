@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,29 +27,47 @@ public class ServerFacade {
         var path = "/db";
         makeRequest("DELETE", path, null, null, null);
     }
-    public AuthDataRecord registerUser(UserDataRecord user) throws ResponseException {
-        var path = "/user";
-        return makeRequest("POST", path, null, user, AuthDataRecord.class);
+    public AuthDataRecord registerUser(String... params) throws ResponseException {
+        UserDataRecord user = new UserDataRecord(params[0], params[1], params[2]);
+        return makeRequest("POST", "/user", null, user, AuthDataRecord.class);
     }
-    public AuthDataRecord login(UserDataRecord user) throws ResponseException {
-        var path = "/session";
-        return makeRequest("POST", path, null, user, AuthDataRecord.class);
+    public AuthDataRecord login(String... params) throws ResponseException {
+        try {
+            UserDataRecord user = new UserDataRecord(params[0], params[1], "");
+            return makeRequest("POST", "/session", null, user, AuthDataRecord.class);
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public void logout(AuthDataRecord auth) throws ResponseException {
-        var path = "/session";
-        makeRequest("DELETE", path, auth.authToken(), null, null);
+        try { makeRequest("DELETE", "/session", auth.authToken(), null, null); }
+        catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
     public GameListRecord listGames(AuthDataRecord auth) throws ResponseException {
-        var path = "/game";
-        return makeRequest("GET", path, auth.authToken(), null, GameListRecord.class);
+        try { return makeRequest("GET", "/game", auth.authToken(), null, GameListRecord.class); }
+        catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
-    public void createGame(AuthDataRecord auth, GameDataRecord game) throws ResponseException {
-        var path = "/game";
-        makeRequest("POST", path, auth.authToken(), game, Map.class).get("gameID");
+    public GameDataRecord createGame(AuthDataRecord auth, String... params) throws ResponseException {
+        if (params.length == 0) throw new ResponseException(400, "Error: bad request");
+        try {
+            String gameName = Arrays.toString(params).replace("[", "").replace("]", "").replace(",", "");
+            GameDataRecord game = new GameDataRecord(0, null, null, gameName, null);
+            makeRequest("POST", "/game", auth.authToken(), game, Map.class);
+            return game;
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
-    public void joinGame(AuthDataRecord auth, JoinGameData game) throws ResponseException {
-        var path = "/game";
-        makeRequest("PUT", path, auth.authToken(), game, null);
+    public String joinGame(AuthDataRecord auth, int gameId, String... params) throws ResponseException {
+        try {
+            String output, color;
+            try {
+                color = params[1];
+                output = "Joined";
+            } catch (IndexOutOfBoundsException e) {
+                color = null;
+                output = "Observing";
+            }
+            JoinGameData game = new JoinGameData(gameId, color);
+            makeRequest("PUT", "/game", auth.authToken(), game, null);
+            return output;
+        } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
 
     private <T> T makeRequest(String method, String path, String auth, Object request, Class<T> responseClass) throws ResponseException {
