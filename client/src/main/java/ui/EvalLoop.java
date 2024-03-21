@@ -1,7 +1,5 @@
 package ui;
 
-import exception.ResponseException;
-
 import java.util.*;
 
 public abstract class EvalLoop {

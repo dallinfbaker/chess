@@ -4,23 +4,12 @@ import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-
-//import static java.lang.System.out;
 import static model.EscapeSequences.*;
 
 public class DrawChessBoard {
-
-    private static final int BOARD_SIZE_IN_SQUARES = 3;
-    private static final int SQUARE_SIZE_IN_CHARS = 3;
-    private static final int LINE_WIDTH_IN_CHARS = 1;
-    private static int prefixLength = SQUARE_SIZE_IN_CHARS / 2;
-    private static int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
 
     public static String drawBoard(ChessBoard board, boolean reverse) {
         StringBuilder output = new StringBuilder();
@@ -64,7 +53,7 @@ public class DrawChessBoard {
                     setTextBlack(output);
                     output.append(getString(piece, BLACK_KING, BLACK_QUEEN, BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_PAWN));
                 }
-            };
+            }
         } catch (Exception e) { output.append("  ").append(SET_SPACING); }
     }
 
@@ -79,19 +68,7 @@ public class DrawChessBoard {
         };
     }
 
-    private static void setWhite(StringBuilder output) {
-        output.append(SET_BG_COLOR_WHITE);
-        output.append(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void setTextRed(StringBuilder output) { output.append(SET_TEXT_COLOR_RED); }
-    private static void setTextBlue(StringBuilder output) { output.append(SET_TEXT_COLOR_BLUE); }
-
     private static void setTextWhite(StringBuilder output) { output.append(SET_TEXT_COLOR_WHITE); }
     private static void setTextBlack(StringBuilder output) { output.append(SET_TEXT_COLOR_BLACK); }
 
-    private static void setBlack(StringBuilder output) {
-        output.append(SET_TEXT_COLOR_BLACK);
-        output.append(SET_BG_COLOR_BLACK);
-    }
 }
