@@ -4,6 +4,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameDataRecord;
+import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -16,10 +17,12 @@ import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
 import java.io.IOException;
 
 @WebSocket
-public class WebSocketHandler {
+public class WebSocketHandler extends Endpoint {
 
     private final ConnectionManager connections = new ConnectionManager();
     private final AuthService authService;
@@ -93,4 +96,7 @@ public class WebSocketHandler {
         authHandler(auth);
         sendLoadGame(username, String.format("%s made a move", username), gameService.makeMove(id, username, move));
     }
+
+    @Override
+    public void onOpen(javax.websocket.Session session, EndpointConfig endpointConfig) {}
 }
