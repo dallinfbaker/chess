@@ -6,12 +6,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class PreLoginEval extends EvalLoop {
-    private final PostLoginEval postLoginEval;
 
-    protected PreLoginEval(ServerFacade serverFacade, String serverURL, String port) {
-        super(serverFacade, serverURL, port);
-        postLoginEval = new PostLoginEval(serverFacade, serverURL, port);
-    }
+    protected PreLoginEval(ServerFacade serverFacade, String serverURL, String port) { super(serverFacade, serverURL, port); }
     @Override
     public String eval(String cmd, String... params) {
         try {
@@ -33,8 +29,10 @@ public class PreLoginEval extends EvalLoop {
             output = inputs.next();
             System.out.printf("%s%n", output);
             if (Objects.equals(input, "login") || Objects.equals(input, "register") &&
-                    (Objects.equals(output.split(" ")[0], "Logged") || Objects.equals(output.split(" ")[0], "Registered")))
-            { output = postLoginEval.loop(); }
+                    (Objects.equals(output.split(" ")[0], "Logged") || Objects.equals(output.split(" ")[0], "Registered"))) {
+                PostLoginEval postLoginEval = new PostLoginEval(server, serverUrl, port);
+                output = postLoginEval.loop();
+            }
             if (Objects.equals(output, "quit")) { break; }
         } while (!Objects.equals(output, "quit"));
         System.out.print("exit program");

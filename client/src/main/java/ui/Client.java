@@ -5,7 +5,6 @@ import ui.webSocket.NotificationHandler;
 import ui.webSocket.WebSocketFacade;
 
 public class Client {
-//    private final ServerFacade server = null;
     private final String serverURL;
     private final String port;
     private NotificationHandler notificationHandler;

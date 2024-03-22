@@ -1,22 +1,33 @@
 package ui;
 
+import chess.ChessGame;
 import exception.ResponseException;
+import model.DrawChessBoard;
+import model.GameDataRecord;
+import ui.webSocket.NotificationHandler;
+import ui.webSocket.WebSocketFacade;
 
 import java.util.Iterator;
 import java.util.Objects;
 
 public class GamePlayEval extends EvalLoop {
-    protected GamePlayEval(ServerFacade serverFacade, String serverURL, String port) {
+    private final GameDataRecord game;
+    private NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
+    protected GamePlayEval(ServerFacade serverFacade, String serverURL, String port, GameDataRecord gameDataRecord) {
         super(serverFacade, serverURL, port);
+        game = gameDataRecord;
     }
-//    public GamePlayEval(ServerFacade server) { super(server); }
 
     @Override
     public String eval(String cmd, String... params) {
         try {
             return switch (cmd) {
+                case "redraw" -> redrawBoard();
                 case "move" -> makeMove(params);
                 case "leave" -> leaveGame(params);
+                case "resign" -> resign();
+                case "show" -> showLegalMoves(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -37,6 +48,13 @@ public class GamePlayEval extends EvalLoop {
             System.out.printf("%s%n", output);
         } while (!Objects.equals(input, "leave") && !Objects.equals(output, "quit"));
         return output;
+    }
+
+    private String redrawBoard() { return DrawChessBoard.drawBoard(game.game().getBoard(), true); }
+    private String resign() { return null; }
+
+    private String showLegalMoves(String... params) {
+        return DrawChessBoard.drawBoard(game.game().getBoard(), true);
     }
 
     public String makeMove(String... params) throws ResponseException {

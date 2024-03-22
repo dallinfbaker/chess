@@ -3,9 +3,7 @@ package ui;
 import java.util.*;
 
 public abstract class EvalLoop {
-
     protected static ServerFacade server;
-
     protected static String serverUrl, port, userName, authToken;
 
     protected EvalLoop(ServerFacade serverFacade, String serverURL, String port) {
@@ -15,8 +13,6 @@ public abstract class EvalLoop {
     }
 
     void connect(String serverURL, String port) { if (Objects.isNull(server)) server = new ServerFacade(serverURL, port); }
-
-
 
     public Collection<String> getInput() {
         ArrayList<String> output = new ArrayList<>();
