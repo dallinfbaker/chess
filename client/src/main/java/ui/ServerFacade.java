@@ -49,7 +49,7 @@ public class ServerFacade {
         if (params.length == 0) throw new ResponseException(400, "Error: bad request");
         try {
             String gameName = Arrays.toString(params).replace("[", "").replace("]", "").replace(",", "");
-            GameDataRecord game = new GameDataRecord(0, null, null, gameName, null);
+            GameDataRecord game = new GameDataRecord(0, null, null, gameName, null, null);
             makeRequest("POST", "/game", auth.authToken(), game, Map.class);
             return game;
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
