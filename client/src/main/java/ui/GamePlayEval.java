@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessGame;
 import exception.ResponseException;
 import model.DrawChessBoard;
 import model.GameDataRecord;

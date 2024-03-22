@@ -8,9 +8,12 @@ import dataAccess.databaseDAO.GameDAODB;
 import dataAccess.memoryDAO.GameDAOMemory;
 import model.GameDataRecord;
 import model.GameListRecord;
+import model.ObservingUsers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,9 +34,9 @@ class GameDAOInterfaceTest {
 
         try { dao.clearGames(); } catch(DataAccessException ignored) {}
 
-        dao.addGame(new GameDataRecord(1234, "white", "black", "normal", new ChessGame()));
-        dao.addGame(new GameDataRecord(2345, "", "", "noUsername", new ChessGame()));
-        dao.addGame(new GameDataRecord(3456, null, null, "game", new ChessGame()));
+        dao.addGame(new GameDataRecord(1234, "white", "black", "normal", new ChessGame(), new ObservingUsers(new HashSet<>())));
+        dao.addGame(new GameDataRecord(2345, "", "", "noUsername", new ChessGame(), new ObservingUsers(new HashSet<>())));
+        dao.addGame(new GameDataRecord(3456, null, null, "game", new ChessGame(), new ObservingUsers(new HashSet<>())));
     }
     @Test
     void getGamesPos() throws DataAccessException {
@@ -105,15 +108,15 @@ class GameDAOInterfaceTest {
 
     @Test
     void addGamePos() {
-        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(11234, "white", "black", "normal", new ChessGame())));
-        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(12234, "white", "black", "normal", new ChessGame())));
-        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(13234, "white", "black", "normal", new ChessGame())));
+        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(11234, "white", "black", "normal", new ChessGame(), new ObservingUsers(new HashSet<>()))));
+        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(12234, "white", "black", "normal", new ChessGame(), new ObservingUsers(new HashSet<>()))));
+        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(13234, "white", "black", "normal", new ChessGame(), new ObservingUsers(new HashSet<>()))));
     }
 
     @Test
     void addGameNeg() throws DataAccessException {
-        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(1234, "whitee", "bbbbblack", "nooooooormal", null)));
-        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(1234, "whitebbb", "blaaaaaack", "noaaarmal", new ChessGame())));
+        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(1234, "whitee", "bbbbblack", "nooooooormal", null, null)));
+        assertDoesNotThrow(() -> dao.addGame(new GameDataRecord(1234, "whitebbb", "blaaaaaack", "noaaarmal", new ChessGame(), null)));
         assertEquals("normal", dao.getGame(1234).gameName());
         assertEquals("white", dao.getGame(1234).whiteUsername());
     }

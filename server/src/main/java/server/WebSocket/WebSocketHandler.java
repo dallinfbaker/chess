@@ -10,7 +10,6 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.AuthService;
 import service.GameService;
 import service.UserService;
-import webSocketMessages.Notification;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
