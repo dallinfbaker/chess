@@ -127,8 +127,8 @@ public class Server {
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
 
-    @OnWebSocketMessage
-    public void messageReceived() {
-
-    }
+//    @OnWebSocketMessage
+//    public void messageReceived() {
+//
+//    }
 }

@@ -1,9 +1,5 @@
 package ui;
 
-
-import ui.webSocket.ServerMessageHandler;
-import ui.webSocket.WebSocketFacade;
-
 public class Client {
     private final String serverURL;
     private final String port;
