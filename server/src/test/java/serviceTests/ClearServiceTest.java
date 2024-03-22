@@ -4,9 +4,12 @@ import dataAccess.DAOManager;
 import dataAccess.DataAccessException;
 import chess.ChessGame;
 import model.GameDataRecord;
+import model.ObservingUsers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.ClearService;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,13 +22,13 @@ class ClearServiceTest {
         DAOManager dao = new DAOManager(false);
         service = new ClearService(dao);
 
-        GameDataRecord data = new GameDataRecord(1234, "", "", "", new ChessGame());
+        GameDataRecord data = new GameDataRecord(1234, "", "", "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.gameDAO.addGame(data);
-        data = new GameDataRecord(4321, "", "", "", new ChessGame());
+        data = new GameDataRecord(4321, "", "", "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.gameDAO.addGame(data);
-        data = new GameDataRecord(2341, "", "", "", new ChessGame());
+        data = new GameDataRecord(2341, "", "", "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.gameDAO.addGame(data);
-        data = new GameDataRecord(3412, "", "", "", new ChessGame());
+        data = new GameDataRecord(3412, "", "", "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         try {
             dao.gameDAO.setWhiteUsername(3412, "white");
             dao.gameDAO.setBlackUsername(3412, "black");

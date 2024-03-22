@@ -17,7 +17,7 @@ public class Server {
     private final ClearService clearService = new ClearService(daoManager);
     private final UserService userService = new UserService(daoManager);
     private final GameService gameService = new GameService(daoManager.gameDAO);
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler(authService, gameService, userService);
 
 
     public Server() {}
@@ -77,9 +77,9 @@ public class Server {
     public Object loginHandler(Request req, Response res) throws ResponseException {
         try {
             var user = new Gson().fromJson(req.body(), UserDataRecord.class);
-            AuthDataRecord auth = userService.login(user);
-            res.status(200);
-            return new Gson().toJson(auth);
+//            AuthDataRecord auth = userService.login(user);
+//            res.status(200);
+            return new Gson().toJson(userService.login(user));
         } catch (ResponseException e) { throw e; }
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }

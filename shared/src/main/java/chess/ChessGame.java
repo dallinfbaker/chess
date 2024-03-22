@@ -77,9 +77,8 @@ public class ChessGame {
             if (enPassantVulnerable != null) { enPassantVulnerable.setEnPassantVulnerable(false); }
             enPassantVulnerable = board.getPiece(move.getEndPosition());
             if (enPassantVulnerable.getPieceType() == ChessPiece.PieceType.PAWN &&
-                    Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2) {
-                enPassantVulnerable.setEnPassantVulnerable(true);
-            }
+                    Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2)
+            { enPassantVulnerable.setEnPassantVulnerable(true); }
             else { enPassantVulnerable = null; }
         }
         else throw new InvalidMoveException();
@@ -93,9 +92,7 @@ public class ChessGame {
         else if (!movePiece.pieceMoves(this.board).contains(move)) return false;
         else if (movePiece.getPieceType() == ChessPiece.PieceType.KING &&
                 Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
-            int row = move.getStartPosition().getRow(),
-                    end = move.getEndPosition().getColumn(),
-                    direction = end == 7 ? 1 : -1;
+            int row = move.getStartPosition().getRow(),  end = move.getEndPosition().getColumn(), direction = end == 7 ? 1 : -1;
             for (int col = move.getStartPosition().getColumn(); col * direction <= end * direction; col += direction) {
                 if (isCheckPosition(new ChessPosition(row, col), this.turnColor)) return false;
             }

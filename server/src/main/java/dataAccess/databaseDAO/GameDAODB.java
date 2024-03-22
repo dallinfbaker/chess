@@ -7,8 +7,10 @@ import dataAccess.DatabaseManager;
 import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
 import model.GameListRecord;
+import model.ObservingUsers;
 
 import java.sql.*;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -21,7 +23,8 @@ public class GameDAODB implements GameDAOInterface {
             String black = rs.getString(3);
             String name = rs.getString(4);
             ChessGame game = new Gson().fromJson(rs.getString(5), ChessGame.class);
-            return new GameDataRecord(gameId, white, black, name, game);
+            ObservingUsers users = new Gson().fromJson(rs.getString(6), ObservingUsers.class);
+            return new GameDataRecord(gameId, white, black, name, game, users);
         } catch (SQLException ignored) { return null; }
     };
 
@@ -39,31 +42,31 @@ public class GameDAODB implements GameDAOInterface {
     }
 
     @Override
-    public GameDataRecord getGame(int gameID) throws DataAccessException {
-//        DatabaseManager.executeUpdate("select", "game_id, white_player_username, black_player_username, game_name, game_json", "from", "chess_game", "where", "game_id = ?");
-        String statement = "SELECT game_id, white_player_username, black_player_username, game_name, game_json FROM chess_games WHERE game_id = ?";
-        try { return (GameDataRecord) DatabaseManager.executeQuery(statement, buildGame, gameID).toArray()[0]; }
+    public GameDataRecord getGame(int gameId) throws DataAccessException {
+        String statement = "SELECT game_id, white_player_username, black_player_username, game_name, game_json, observers_json FROM chess_games WHERE game_id = ?";
+        try { return (GameDataRecord) DatabaseManager.executeQuery(statement, buildGame, gameId).toArray()[0]; }
         catch (ArrayIndexOutOfBoundsException e) { throw new DataAccessException(e.getMessage()); }
     }
 
     @Override
     public int createGameData(String gameName) throws DataAccessException {
-        String statement = "INSERT INTO chess_games (game_id, game_name, game_json) VALUES (?, ?, ?)";
+        String statement = "INSERT INTO chess_games (game_id, game_name, game_json, observers_json) VALUES (?, ?, ?, ?)";
         int id = generateID();
         var gameJson = new Gson().toJson(new ChessGame());
-        DatabaseManager.executeUpdate(statement, id, gameName, gameJson);
+        var observersJson = new Gson().toJson(new ObservingUsers(new HashSet<>()));
+        DatabaseManager.executeUpdate(statement, id, gameName, gameJson, observersJson);
         return id;
     }
 
     @Override
     public void setWhiteUsername(int gameID, String username) throws DataAccessException {
-        String statement = "UPDATE chess_games Set white_player_username = ? WHERE game_id = ?";
+        String statement = "UPDATE chess_games SET white_player_username = ? WHERE game_id = ?";
         DatabaseManager.executeUpdate(statement, username, gameID);
     }
 
     @Override
     public void setBlackUsername(int gameID, String username) throws DataAccessException {
-        String statement = "UPDATE chess_games Set black_player_username = ? WHERE game_id = ?";
+        String statement = "UPDATE chess_games SET black_player_username = ? WHERE game_id = ?";
         DatabaseManager.executeUpdate(statement, username, gameID);
     }
 
@@ -75,8 +78,15 @@ public class GameDAODB implements GameDAOInterface {
 
     @Override
     public void addGame(GameDataRecord data) {
-        String statement = "INSERT INTO chess_games (game_id, white_player_username, black_player_username, game_name, game_json) VALUES (?, ?, ?, ?, ?)";
-        try { DatabaseManager.executeUpdate(statement, data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), new Gson().toJson(data.game())); }
+        String statement = "INSERT INTO chess_games (game_id, white_player_username, black_player_username, game_name, game_json, observers_json) VALUES (?, ?, ?, ?, ?, ?)";
+        try { DatabaseManager.executeUpdate(statement, data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), new Gson().toJson(data.game()), new Gson().toJson(data.observers())); }
+        catch (DataAccessException ignored) {}
+    }
+
+    @Override
+    public void updateGame(GameDataRecord data) {
+        String statement = "UPDATE chess_games SET game_json = ?, observers_json = ? WHERE game_id = ?";
+        try { DatabaseManager.executeUpdate(statement, new Gson().toJson(data.game()), new Gson().toJson(data.observers()), data.gameID()); }
         catch (DataAccessException ignored) {}
     }
 }

@@ -62,7 +62,8 @@ public class DatabaseManager {
                         "    white_player_username VARCHAR(50)," +
                         "    black_player_username VARCHAR(50)," +
                         "    game_name VARCHAR(50) NOT NULL," +
-                        "    game_json json NOT NULL" +
+                        "    game_json json NOT NULL," +
+                        "    observers_json json" +
                         ");";
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

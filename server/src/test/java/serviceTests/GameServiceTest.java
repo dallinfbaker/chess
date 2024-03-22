@@ -7,10 +7,13 @@ import dataAccess.memoryDAO.GameDAOMemory;
 import chess.ChessGame;
 import model.GameDataRecord;
 import model.GameListRecord;
+import model.ObservingUsers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import exception.ResponseException;
 import service.GameService;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,13 +33,13 @@ class GameServiceTest {
 
         service = new GameService(dao);
 
-        GameDataRecord data = new GameDataRecord(1234, null, null, "", new ChessGame());
+        GameDataRecord data = new GameDataRecord(1234, null, null, "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.addGame(data);
-        data = new GameDataRecord(4321, null, null, "", new ChessGame());
+        data = new GameDataRecord(4321, null, null, "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.addGame(data);
-        data = new GameDataRecord(2341, null, null, "", new ChessGame());
+        data = new GameDataRecord(2341, null, null, "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.addGame(data);
-        data = new GameDataRecord(3412, null, null, "", new ChessGame());
+        data = new GameDataRecord(3412, null, null, "", new ChessGame(), new ObservingUsers(new HashSet<>()));
         dao.addGame(data);
         try {
             dao.setWhiteUsername(3412, "white");

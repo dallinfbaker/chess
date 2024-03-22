@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAOInterface;
 import model.GameDataRecord;
@@ -33,16 +34,15 @@ public class GameService {
             try {
                 user = gameData.whiteUsername();
                 if (Objects.isNull(user)) gameDAO.setWhiteUsername(gameID, username);
-                else if (!Objects.equals(user, username))
-                    throw new ResponseException(403, "Error: already taken");
+                else if (!Objects.equals(user, username)) throw new ResponseException(403, "Error: already taken");
             } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         }
-        else {
+        else if (Objects.equals(playerColor.toUpperCase(), "BLACK")) {
             try {
                 user = gameData.blackUsername();
                 if (Objects.isNull(user)) gameDAO.setBlackUsername(gameID, username);
                 else if (!Objects.equals(user, username)) throw new ResponseException(403,"Error: already taken");
-            } catch (DataAccessException e) { throw new ResponseException(401, "Error: bad request"); }
+            } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         }
     }
     public void watchGame(int gameID) throws ResponseException {
@@ -53,7 +53,23 @@ public class GameService {
         try { return gameDAO.getGames(); }
         catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
     }
-    public void makeMove(int gameID, String username, ChessMove move) {
-
+    public GameDataRecord makeMove(int gameId, String username, ChessMove move) throws ResponseException {
+        try {
+            GameDataRecord game = gameDAO.getGame(gameId);
+            game.game().makeMove(move);
+            gameDAO.updateGame(game);
+            return game;
+        } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
+        catch (InvalidMoveException e) { throw new ResponseException(400, "Error: illegal move"); }
+    }
+    public void removePlayer(int gameID, String playerColor) throws ResponseException {
+        if (Objects.equals(playerColor.toUpperCase(), "WHITE")) {
+            try { gameDAO.setWhiteUsername(gameID, null); }
+            catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
+        }
+        else if (Objects.equals(playerColor.toUpperCase(), "BLACK")) {
+            try { gameDAO.setBlackUsername(gameID, null); }
+            catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
+        }
     }
 }
