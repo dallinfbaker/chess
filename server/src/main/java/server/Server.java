@@ -4,7 +4,6 @@ import dataAccess.*;
 import com.google.gson.*;
 import exception.*;
 import model.*;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import server.WebSocket.*;
 import service.*;
 import spark.*;
