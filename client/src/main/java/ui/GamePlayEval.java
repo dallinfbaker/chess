@@ -16,18 +16,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
-import static model.EscapeSequences.SET_TEXT_COLOR_GREEN;
-import static model.EscapeSequences.SET_TEXT_COLOR_RED;
+import static model.EscapeSequences.*;
 
 public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
     private WebSocketFacade webSocket;
     private GameDataRecord game;
     private final AuthDataRecord auth;
     private Collection<ChessMove> moves;
-    protected GamePlayEval(ServerFacade serverFacade, String serverURL, String port, GameDataRecord gameDataRecord) {
+    private final boolean reversed;
+    protected GamePlayEval(ServerFacade serverFacade, String serverURL, String port, GameDataRecord gameDataRecord, boolean reverse) {
         super(serverFacade, serverURL, port);
         game = gameDataRecord;
         auth = new AuthDataRecord(authToken, userName);
+        reversed = reverse;
+        redrawBoard();
     }
 
     @Override
@@ -47,9 +49,11 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
 
     @Override
     public String loop() {
-        try {
-            webSocket = new WebSocketFacade(serverUrl + ":" + port, this);
-        } catch (Exception ignored) { return "unable to connect"; }
+        try { webSocket = new WebSocketFacade(serverUrl + ":" + port, this); }
+        catch (Exception e) {
+            System.out.print("unable to connect\n");
+            return "unable to connect";
+        }
         try { webSocket.joinGame(game, auth); }
         catch (ResponseException e) { System.out.printf("%d %s\n", e.statusCode(), e.getMessage()); }
 
@@ -63,9 +67,9 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
         return output;
     }
 
-    private String redrawBoard() { return DrawChessBoard.drawBoard(game.game().getBoard(), true); }
+    private String redrawBoard() { return DrawChessBoard.drawBoard(game.game().getBoard(), reversed); }
     private String resign() throws ResponseException {
-        webSocket.resignGame(game, auth);
+        webSocket.resignGame(game.gameID(), auth);
         return "you lost the game";
     }
     private String showLegalMoves(String... params) {
@@ -84,25 +88,32 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
     @Override
     public String help() {
         return """
+            redraw - the board
             move <START POSITION> <END POSITION> - to move a piece
             leave - to leave game
+            resign - the game
+            show - legal moves
             quit - playing chess
             help - with possible commands""";
     }
 
     @Override
     public void notify(NotificationMessage message) {
-        System.out.printf("%s%s\n", SET_TEXT_COLOR_GREEN, message.getMessage());
+        System.out.printf("\n%s%s\n", SET_TEXT_COLOR_GREEN, message.getMessage());
+        System.out.printf("%n>>> ");
     }
 
     @Override
     public void loadGame(LoadGameMessage message) {
         game = message.getGameData();
-        redrawBoard();
+        System.out.printf("\n%s%s\n", SET_TEXT_COLOR_BLUE, message.getMessage());
+        System.out.printf(redrawBoard());
+        System.out.printf("%n>>> ");
     }
 
     @Override
     public void errorHandler(ErrorMessage message) {
-        System.out.printf("%s%s\n", SET_TEXT_COLOR_RED, message.getMessage());
+        System.out.printf("\n%s%s\n", SET_TEXT_COLOR_RED, message.getMessage());
+        System.out.printf("\n%n>>> ");
     }
 }

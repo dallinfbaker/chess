@@ -14,6 +14,7 @@ import java.util.Objects;
 public class PostLoginEval extends EvalLoop {
     private int gameId;
     private Map<Integer, GameDataRecord> gameList = new HashMap<>();
+    private boolean reverse = true;
 
     protected PostLoginEval(ServerFacade serverFacade, String serverURL, String port) { super(serverFacade, serverURL, port); }
 
@@ -41,7 +42,7 @@ public class PostLoginEval extends EvalLoop {
             output = inputs.next();
             System.out.printf("%s%n", output);
             if ((Objects.equals(input, "observe") || Objects.equals(input, "join")) && Objects.equals(output.split(" ")[1], "game:")) {
-                GamePlayEval gamePlayEval = new GamePlayEval(server, serverUrl, port, gameList.get(gameId));
+                GamePlayEval gamePlayEval = new GamePlayEval(server, serverUrl, port, gameList.get(gameId), reverse);
                 output = gamePlayEval.loop();
             }
         } while (!Objects.equals(input, "logout") && !Objects.equals(output, "quit"));
@@ -74,10 +75,14 @@ public class PostLoginEval extends EvalLoop {
         try {
             AuthDataRecord auth = new AuthDataRecord(authToken, userName);
             gameId = Integer.parseInt(params[0]);
+            try { if (Objects.equals("black", params[1].toLowerCase())) reverse = false; }
+            catch (IndexOutOfBoundsException ignored) {}
+//            return server.joinGame(auth, gameList.get(gameId).gameID(), params) +
+//                    " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n" +
+//                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), false) +
+//                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), true);
             return server.joinGame(auth, gameList.get(gameId).gameID(), params) +
-                    " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n" +
-                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), false) +
-                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), true);
+                    " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n";
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }
 

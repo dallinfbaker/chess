@@ -12,8 +12,8 @@ import static model.EscapeSequences.*;
 public class DrawChessBoard {
 
     public static String drawBoard(ChessBoard board, boolean reverse) {
-        StringBuilder output = new StringBuilder();
-        output.append(SET_TEXT_COLOR_GREEN);
+        StringBuilder output = new StringBuilder("\n");
+        output.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_GREEN);
         addHeader(output, reverse);
         ChessPiece piece;
         boolean light = true;

@@ -2,13 +2,12 @@ package ui.webSocket;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import exception.ResponseException;
 import model.AuthDataRecord;
 import model.GameDataRecord;
-import webSocketMessages.serverMessages.ErrorMessage;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
-import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.serverMessages.*;
 import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
@@ -33,41 +32,47 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, socketURI);
 
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) {
-                    ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
-                    switch (msg.getServerMessageType()) {
-                        case NOTIFICATION -> msgHandler.notify(new Gson().fromJson(message, NotificationMessage.class));
-                        case LOAD_GAME -> msgHandler.loadGame(new Gson().fromJson(message, LoadGameMessage.class));
-                        case ERROR -> msgHandler.errorHandler(new Gson().fromJson(message, ErrorMessage.class));
-                    }
-                }
-            });
+            this.session.addMessageHandler( new MessageHandler.Whole<String> () {
+                public void onMessage(String message) { onMessageReceived(message); }
+//                ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+//                switch (msg.getServerMessageType()) {
+//                    case NOTIFICATION -> msgHandler.notify(new Gson().fromJson(message, NotificationMessage.class));
+//                    case LOAD_GAME -> msgHandler.loadGame(new Gson().fromJson(message, LoadGameMessage.class));
+//                    case ERROR -> msgHandler.errorHandler(new Gson().fromJson(message, ErrorMessage.class));
+//                }
+//            });
+                    });
+            //this.session.addMessageHandler((MessageHandler.Whole<String>) this::onMessage);
         } catch (DeploymentException | IOException | URISyntaxException ex) { throw new ResponseException(500, ex.getMessage()); }
     }
 
-    //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
+
+    public void onMessageReceived(String message) {
+//        JsonObject msg = new Gson().fromJson(message, JsonElement.class).getAsJsonObject();
+//        String type = msg.get("severMessageType").getAsString();
+//        switch (type) {
+//            case "NOTIFICATION" -> msgHandler.notify(new Gson().fromJson(message, NotificationMessage.class));
+//            case "LOAD_GAME" -> msgHandler.loadGame(new Gson().fromJson(message, LoadGameMessage.class));
+//            case "ERROR" -> msgHandler.errorHandler(new Gson().fromJson(message, ErrorMessage.class));
+//        }
+        ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+        switch (msg.getServerMessageType()) {
+            case NOTIFICATION -> msgHandler.notify(new Gson().fromJson(message, NotificationMessage.class));
+            case LOAD_GAME -> msgHandler.loadGame(new Gson().fromJson(message, LoadGameMessage.class));
+            case ERROR -> msgHandler.errorHandler(new Gson().fromJson(message, ErrorMessage.class));
+        }
+    }
 
     private void sendMessage(UserCommand msg) throws ResponseException {
         try { session.getBasicRemote().sendText(new Gson().toJson(msg)); }
         catch (IOException ignored) { throw new ResponseException(500, "Error: unable to send message"); }
     }
 
-    public void leaveGame(GameDataRecord data, AuthDataRecord auth) throws ResponseException {
-        sendMessage(new LeaveCommand(auth, data.gameID(), color));
-
-    }
-    public void makeMove(GameDataRecord data, AuthDataRecord auth, ChessMove move) throws ResponseException {
-        sendMessage(new MakeMoveCommand(auth, data.gameID(), color, move));
-
-    }
-    public void resignGame(GameDataRecord data, AuthDataRecord auth) throws ResponseException {
-//        ResignCommand msg = new ResignCommand(auth, data.gameID(), color);
-        sendMessage(new ResignCommand(auth, data.gameID(), color));
-    }
+    public void leaveGame(GameDataRecord data, AuthDataRecord auth) throws ResponseException { sendMessage(new LeaveCommand(auth, data.gameID(), color)); }
+    public void makeMove(GameDataRecord data, AuthDataRecord auth, ChessMove move) throws ResponseException { sendMessage(new MakeMoveCommand(auth, data.gameID(), color, move)); }
+    public void resignGame(int id, AuthDataRecord auth) throws ResponseException { sendMessage(new ResignCommand(auth, id, color)); }
     public void joinGame(GameDataRecord data, AuthDataRecord auth) throws ResponseException {
         color = Objects.equals(auth.username(), data.whiteUsername()) ? "white" : Objects.equals(auth.username(), data.blackUsername()) ? "black" : null;
         UserCommand msg;
@@ -75,28 +80,4 @@ public class WebSocketFacade extends Endpoint {
         else msg = new JoinPlayerCommand(auth, data.gameID(), color);
         sendMessage(msg);
     }
-//    public void observeGame(GameDataRecord data, AuthDataRecord auth) {
-//
-//    }
-
-
-//    public void enterPetShop(String visitorName) throws ResponseException {
-//        try {
-//            var action = new Action(Action.Type.ENTER, visitorName);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//        } catch (IOException ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
-//
-//    public void leavePetShop(String visitorName) throws ResponseException {
-//        try {
-//            var action = new Action(Action.Type.EXIT, visitorName);
-//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//            this.session.close();
-//        } catch (IOException ex) {
-//            throw new ResponseException(500, ex.getMessage());
-//        }
-//    }
-
 }

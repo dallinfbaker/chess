@@ -28,7 +28,7 @@ public class PreLoginEval extends EvalLoop {
             input = inputs.next();
             output = inputs.next();
             System.out.printf("%s%n", output);
-            if (Objects.equals(input, "login") || Objects.equals(input, "register") &&
+            if ((Objects.equals(input, "login") || Objects.equals(input, "register")) &&
                     (Objects.equals(output.split(" ")[0], "Logged") || Objects.equals(output.split(" ")[0], "Registered"))) {
                 PostLoginEval postLoginEval = new PostLoginEval(server, serverUrl, port);
                 output = postLoginEval.loop();

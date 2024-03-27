@@ -16,7 +16,7 @@ public class Server {
     private final ClearService clearService = new ClearService(daoManager);
     private final UserService userService = new UserService(daoManager);
     private final GameService gameService = new GameService(daoManager.gameDAO);
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler(authService, gameService, userService);
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler(authService, gameService);
 
 
     public Server() {}

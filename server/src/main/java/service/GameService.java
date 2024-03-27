@@ -72,4 +72,8 @@ public class GameService {
             catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         }
     }
+    public GameDataRecord getGame(int gameID) throws ResponseException {
+        try { return gameDAO.getGame(gameID); }
+        catch (DataAccessException e) { throw new ResponseException(400, e.getMessage()); }
+    }
 }

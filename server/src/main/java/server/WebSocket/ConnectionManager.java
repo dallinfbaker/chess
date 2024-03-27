@@ -1,29 +1,31 @@
 package server.WebSocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public HashMap<Integer, HashMap<String, Connection>> connections = new HashMap<>();
 
-    public void add(String name, Session session) {
-        var connection = new Connection(name, session);
-        connections.put(name, connection);
+    public void add(int id, String auth, Session session) {
+        var connection = new Connection(auth, session);
+        if (!connections.containsKey(id)) { connections.put(id, new HashMap<>()); }
+        connections.get(id).put(auth, connection);
     }
 
-    public void remove(String name) { connections.remove(name); }
+    public void remove(int id, String auth) { connections.get(id).remove(auth); }
 
-    public void broadcast(String excludeUser, ServerMessage message) throws IOException {
+    public void broadcast(int id, String ignoredAuth, ServerMessage message) throws IOException {
         var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.userName.equals(excludeUser)) { c.send(message.toString()); }
-            } else { removeList.add(c); }
+        for (Connection con : connections.get(id).values()) {
+            if (Objects.isNull(con) || Objects.equals(ignoredAuth, con.authToken)) continue;
+            if (con.session.isOpen()) {
+                con.send( new Gson().toJson(message)); }
+            else { removeList.add(con); }
         }
-        for (var c : removeList) { connections.remove(c.userName); }
+        for (var c : removeList) { connections.get(id).remove(c.authToken); }
     }
 }
