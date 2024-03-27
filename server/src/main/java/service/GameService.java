@@ -53,7 +53,7 @@ public class GameService {
         try { return gameDAO.getGames(); }
         catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
     }
-    public GameDataRecord makeMove(int gameId, String username, ChessMove move) throws ResponseException {
+    public GameDataRecord makeMove(int gameId, ChessMove move) throws ResponseException {
         try {
             GameDataRecord game = gameDAO.getGame(gameId);
             game.game().makeMove(move);

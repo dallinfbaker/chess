@@ -2,8 +2,6 @@ package ui.webSocket;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import exception.ResponseException;
 import model.AuthDataRecord;
 import model.GameDataRecord;
@@ -34,15 +32,7 @@ public class WebSocketFacade extends Endpoint {
 
             this.session.addMessageHandler( new MessageHandler.Whole<String> () {
                 public void onMessage(String message) { onMessageReceived(message); }
-//                ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
-//                switch (msg.getServerMessageType()) {
-//                    case NOTIFICATION -> msgHandler.notify(new Gson().fromJson(message, NotificationMessage.class));
-//                    case LOAD_GAME -> msgHandler.loadGame(new Gson().fromJson(message, LoadGameMessage.class));
-//                    case ERROR -> msgHandler.errorHandler(new Gson().fromJson(message, ErrorMessage.class));
-//                }
-//            });
-                    });
-            //this.session.addMessageHandler((MessageHandler.Whole<String>) this::onMessage);
+            });
         } catch (DeploymentException | IOException | URISyntaxException ex) { throw new ResponseException(500, ex.getMessage()); }
     }
 

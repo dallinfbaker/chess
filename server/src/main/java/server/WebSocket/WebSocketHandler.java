@@ -13,8 +13,6 @@ import webSocketMessages.serverMessages.*;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
 
 @WebSocket
 public class WebSocketHandler {
@@ -94,7 +92,7 @@ public class WebSocketHandler {
 
     private void makeMove(String auth, String username, ChessMove move, int id) throws ResponseException {
         authHandler(auth);
-        sendLoadGame(id, String.format("%s made a move", username), gameService.makeMove(id, username, move));
+        sendLoadGame(id, String.format("%s made a move", username), gameService.makeMove(id, move));
     }
 
 }

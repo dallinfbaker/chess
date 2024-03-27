@@ -2,7 +2,6 @@ package ui;
 
 import exception.ResponseException;
 import model.AuthDataRecord;
-import model.DrawChessBoard;
 import model.GameDataRecord;
 import model.GameListRecord;
 

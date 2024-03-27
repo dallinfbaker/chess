@@ -38,7 +38,7 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
             return switch (cmd) {
                 case "redraw" -> redrawBoard();
                 case "move" -> makeMove(params);
-                case "leave" -> leaveGame(params);
+                case "leave" -> leaveGame();
                 case "resign" -> resign();
                 case "show" -> showLegalMoves(params);
                 case "quit" -> "quit";
@@ -81,7 +81,7 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
         webSocket.makeMove(game, auth, move);
         return redrawBoard();
     }
-    public String leaveGame(String... params) throws ResponseException {
+    public String leaveGame() throws ResponseException {
         webSocket.leaveGame(game, auth);
         return "Left game";
     }
