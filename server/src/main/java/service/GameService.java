@@ -45,8 +45,12 @@ public class GameService {
             } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
         }
     }
-    public void watchGame(int gameID) throws ResponseException {
-        try { gameDAO.getGame(gameID); }
+    public void watchGame(int gameID, String auth) throws ResponseException {
+        try {
+            GameDataRecord game = gameDAO.getGame(gameID);
+            game.observers().observers().add(auth);
+            gameDAO.updateGame(game);
+        }
         catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
     }
     public GameListRecord listGames() throws ResponseException {
@@ -63,14 +67,10 @@ public class GameService {
         catch (InvalidMoveException e) { throw new ResponseException(400, "Error: illegal move"); }
     }
     public void removePlayer(int gameID, String playerColor) throws ResponseException {
-        if (Objects.equals(playerColor.toUpperCase(), "WHITE")) {
-            try { gameDAO.setWhiteUsername(gameID, null); }
-            catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
-        }
-        else if (Objects.equals(playerColor.toUpperCase(), "BLACK")) {
-            try { gameDAO.setBlackUsername(gameID, null); }
-            catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
-        }
+        try {
+            if (Objects.equals(playerColor.toUpperCase(), "WHITE")) gameDAO.setWhiteUsername(gameID, null);
+            else if (Objects.equals(playerColor.toUpperCase(), "BLACK")) gameDAO.setBlackUsername(gameID, null);
+        } catch (DataAccessException e) { throw new ResponseException(400, "Error: bad request"); }
     }
     public GameDataRecord getGame(int gameID) throws ResponseException {
         try { return gameDAO.getGame(gameID); }

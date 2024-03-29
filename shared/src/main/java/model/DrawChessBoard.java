@@ -1,29 +1,37 @@
 package model;
 
 import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
 import static model.EscapeSequences.*;
 
 public class DrawChessBoard {
 
-    public static String drawBoard(ChessBoard board, boolean reverse) {
+    public static String drawBoard(ChessBoard board, boolean reverse) { return drawBoard(board, reverse, new HashSet<>()); }
+    public static String drawBoard(ChessBoard board, boolean reverse, Collection<ChessMove> moves) {
+        Collection<ChessPosition> endings = new HashSet<>();
+        if (!Objects.isNull(moves)) for (ChessMove move : moves) {
+            endings.add(move.getStartPosition());
+            endings.add(move.getEndPosition());
+        }
         StringBuilder output = new StringBuilder("\n");
         output.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_GREEN);
         addHeader(output, reverse);
         ChessPiece piece;
+        ChessPosition position;
         boolean light = true;
         int direction = reverse ? -1 : 1, end = reverse ? -1 : 8, start = reverse ? 7 : 0;
         for (int row = start; reverse ? row > end : row < end; row = row + direction) {
             output.append(SET_TEXT_COLOR_GREEN).append(row + 1).append(" ");
             for (int col = end - direction; reverse ? col < start - direction : col > start - direction; col = col - direction) {
-                output.append(light ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY);
+                position = new ChessPosition(row + 1, col + 1);
+                setBackground(output, position, endings, light);
                 light = !light;
-                piece = board.getPiece(new ChessPosition(row + 1, col + 1));
+                piece = board.getPiece(position);
                 addPieceString(piece, output);
             }
             output.append(RESET_BG_COLOR).append(SET_TEXT_COLOR_GREEN).append(" ").append(row + 1).append("\n");
@@ -66,6 +74,12 @@ public class DrawChessBoard {
             case BISHOP -> bishop;
             case PAWN -> pawn;
         };
+    }
+
+    private static void setBackground(StringBuilder output, ChessPosition current, Collection<ChessPosition> endings, boolean light) {
+//        if (endings.contains(current)) output.append(light ? SET_BG_COLOR_LIGHT_GREEN : SET_BG_COLOR_DARK_GREEN);
+        if (endings.contains(current)) output.append(light ? SET_BG_COLOR_LIGHT_BLUE : SET_BG_COLOR_DARK_BLUE);
+        else output.append(light ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY);
     }
 
     private static void setTextWhite(StringBuilder output) { output.append(SET_TEXT_COLOR_WHITE); }

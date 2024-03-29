@@ -118,7 +118,7 @@ public class Server {
                 try {
                     String playerColor = jsonObject.get("playerColor").getAsString();
                     gameService.joinGame(gameID, playerColor, username);
-                } catch (NullPointerException e) { gameService.watchGame(gameID); }
+                } catch (NullPointerException e) { gameService.watchGame(gameID, username); }
             } catch (NullPointerException e) { throw new ResponseException(400, "Error: bad request"); }
             return "";
         } catch (ResponseException e) { throw e; }

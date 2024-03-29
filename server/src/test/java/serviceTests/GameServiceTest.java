@@ -77,17 +77,17 @@ class GameServiceTest {
 
     @Test
     void watchGamePos() {
-        assertDoesNotThrow(() -> service.watchGame(1234));
-        assertDoesNotThrow(() -> service.watchGame(4321));
-        assertDoesNotThrow(() -> service.watchGame(2341));
-        assertDoesNotThrow(() -> service.watchGame(3412));
+        assertDoesNotThrow(() -> service.watchGame(1234, "user"));
+        assertDoesNotThrow(() -> service.watchGame(4321, "userblack"));
+        assertDoesNotThrow(() -> service.watchGame(2341, "userwhite"));
+        assertDoesNotThrow(() -> service.watchGame(3412, "u"));
     }
 
     @Test
     void watchGameNeg() {
-        assertThrows(ResponseException.class, () -> service.watchGame(1));
-        assertThrows(ResponseException.class, () -> service.watchGame(1111111111));
-        assertThrows(ResponseException.class, () -> service.watchGame(-4));
+        assertThrows(ResponseException.class, () -> service.watchGame(1,""));
+        assertThrows(ResponseException.class, () -> service.watchGame(1111111111, null));
+        assertThrows(ResponseException.class, () -> service.watchGame(-4, "uihigh"));
     }
 
     @Test

@@ -9,7 +9,8 @@ import java.util.Objects;
  */
 public class ServerMessage {
     private final MessageType serverMessageType;
-    private final String message;
+    private String auth;
+//    private final String message;
 
     public enum MessageType {
         LOAD_GAME,
@@ -17,21 +18,19 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(MessageType type, String msg) {
-        serverMessageType = type;
-        message = msg;
-    }
+    public ServerMessage(MessageType type) { serverMessageType = type; }
 
     public MessageType getServerMessageType() { return serverMessageType; }
-    public String getMessage() { return message; }
+    public void setAuth(String authToke) { auth = authToke; }
+    public String getAuth() { return auth; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ServerMessage that)) return false;
-        return getServerMessageType() == that.getServerMessageType() && Objects.equals(message, that.getMessage());
+        return getServerMessageType() == that.getServerMessageType() && Objects.equals(auth, that.getAuth());
     }
 
     @Override
-    public int hashCode() { return Objects.hash(getServerMessageType(), message); }
+    public int hashCode() { return Objects.hash(getServerMessageType(), auth); }
 }

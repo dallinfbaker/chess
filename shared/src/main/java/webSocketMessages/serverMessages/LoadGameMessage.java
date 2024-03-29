@@ -4,8 +4,8 @@ import model.GameDataRecord;
 
 public class LoadGameMessage extends ServerMessage {
     private final GameDataRecord gameData;
-    public LoadGameMessage(String msg, GameDataRecord game) {
-        super(MessageType.LOAD_GAME, msg);
+    public LoadGameMessage(GameDataRecord game) {
+        super(MessageType.LOAD_GAME);
         gameData = game;
     }
 
