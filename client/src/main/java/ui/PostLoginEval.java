@@ -2,7 +2,6 @@ package ui;
 
 import exception.ResponseException;
 import model.AuthDataRecord;
-import model.DrawChessBoard;
 import model.GameDataRecord;
 import model.GameListRecord;
 
@@ -77,16 +76,8 @@ public class PostLoginEval extends EvalLoop {
             gameId = Integer.parseInt(params[0]);
             try { if (Objects.equals("black", params[1].toLowerCase())) reverse = false; }
             catch (IndexOutOfBoundsException ignored) {}
-            String opu = server.joinGame(auth, gameList.get(gameId).gameID(), params) +
+            return server.joinGame(auth, gameList.get(gameId).gameID(), params) +
                     " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n";
-//                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), reverse);
-            return opu;
-//            return server.joinGame(auth, gameList.get(gameId).gameID(), params) +
-//                    " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n" +
-//                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), false) +
-//                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), true);
-//            return server.joinGame(auth, gameList.get(gameId).gameID(), params) +
-//                    " game: " + gameList.get(Integer.parseInt(params[0])).gameName() + "\n" +
 //                    DrawChessBoard.drawBoard(gameList.get(gameId).game().getBoard(), reverse);
         } catch (Exception e) { throw new ResponseException(500, e.getMessage()); }
     }

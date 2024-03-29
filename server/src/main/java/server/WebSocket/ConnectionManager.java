@@ -2,10 +2,7 @@ package server.WebSocket;
 
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import server.Server;
 import webSocketMessages.serverMessages.ErrorMessage;
-import webSocketMessages.serverMessages.LoadGameMessage;
-import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
