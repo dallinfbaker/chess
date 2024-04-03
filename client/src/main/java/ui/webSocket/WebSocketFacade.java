@@ -30,6 +30,7 @@ public class WebSocketFacade extends Endpoint {
             session = container.connectToServer(this, socketURI);
 
             this.session.addMessageHandler( new MessageHandler.Whole<String> () {
+                @Override
                 public void onMessage(String message) { onMessageReceived(message); }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) { throw new ResponseException(500, ex.getMessage()); }
