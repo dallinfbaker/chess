@@ -63,14 +63,14 @@ public class WebSocketHandler {
     }
 
     private void sendNotification(int id, String ignoredAuth, String msg) throws ResponseException { sendBroadcast(id, ignoredAuth, new NotificationMessage(msg)); }
-    private void sendLoadGame(int id, String msg, GameDataRecord gameData) throws ResponseException { sendBroadcast(id, null, new LoadGameMessage(gameData)); }
-    private void sendError(int id, String msg) {
-        try { sendBroadcast(id, null, new ErrorMessage(msg)); }
-        catch (ResponseException e) {
-            try { sendBroadcast(id, null, new ErrorMessage(msg)); }
-            catch (ResponseException ignored) {}
-        }
-    }
+    private void sendLoadGame(int id, GameDataRecord gameData) throws ResponseException { sendBroadcast(id, null, new LoadGameMessage(gameData)); }
+//    private void sendError(int id, String msg) {
+//        try { sendBroadcast(id, null, new ErrorMessage(msg)); }
+//        catch (ResponseException e) {
+//            try { sendBroadcast(id, null, new ErrorMessage(msg)); }
+//            catch (ResponseException ignored) {}
+//        }
+//    }
 
     private void sendBroadcast(int id, String ignoredAuth, ServerMessage message) throws ResponseException {
         System.out.println("Sending Broadcast");
@@ -128,7 +128,7 @@ public class WebSocketHandler {
 
         GameDataRecord postMove = gameService.makeMove(id, move, username);
         sendNotification(id, auth, String.format("%s made a move", username));
-        sendLoadGame(id, String.format("%s made a move", username), postMove);
+        sendLoadGame(id, postMove);
 //        try {
 //            GameDataRecord postMove = gameService.makeMove(id, move);
 //            sendLoadGame(id, String.format("%s made a move", username), postMove);

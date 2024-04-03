@@ -1,7 +1,6 @@
 package webSocketMessages.userCommands;
 
 import chess.ChessGame;
-import model.AuthDataRecord;
 
 public class JoinPlayerCommand extends UserCommand {
     private final ChessGame.TeamColor playerColor;

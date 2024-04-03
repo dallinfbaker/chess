@@ -1,7 +1,6 @@
 package webSocketMessages.userCommands;
 
 import chess.ChessMove;
-import model.AuthDataRecord;
 
 public class MakeMoveCommand extends UserCommand {
     private final String playerColor;

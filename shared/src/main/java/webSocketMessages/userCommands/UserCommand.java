@@ -1,7 +1,5 @@
 package webSocketMessages.userCommands;
 
-import model.AuthDataRecord;
-
 import java.util.Objects;
 
 /**

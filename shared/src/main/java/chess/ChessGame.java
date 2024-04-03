@@ -12,7 +12,7 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor turnColor;
-    private Map<TeamColor, Integer> pieceCounter;
+    private final Map<TeamColor, Integer> pieceCounter;
     private ChessPiece enPassantVulnerable = null;
     private boolean finished;
     public ChessGame() {
