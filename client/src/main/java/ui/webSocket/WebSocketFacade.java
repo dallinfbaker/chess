@@ -3,7 +3,6 @@ package ui.webSocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
-//import model.AuthDataRecord;
 import model.GameDataRecord;
 import webSocketMessages.serverMessages.*;
 import webSocketMessages.userCommands.*;
