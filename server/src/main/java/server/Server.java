@@ -125,9 +125,4 @@ public class Server {
         catch (JsonSyntaxException e) { throw new ResponseException(400, "Error: bad request"); }
         catch (Exception e) { throw new ResponseException(500, "Error: " + e.getMessage()); }
     }
-
-//    @OnWebSocketMessage
-//    public void messageReceived() {
-//
-//    }
 }

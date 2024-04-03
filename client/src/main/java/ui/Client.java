@@ -4,8 +4,8 @@ public class Client {
     private final String serverURL;
     private final String port;
 
-    public Client (String URL, String port) {
-        serverURL = URL;
+    public Client (String Url, String port) {
+        serverURL = Url;
         this.port = port;
     }
 
