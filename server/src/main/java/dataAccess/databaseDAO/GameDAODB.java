@@ -86,7 +86,19 @@ public class GameDAODB implements GameDAOInterface {
     @Override
     public void updateGame(GameDataRecord data) {
         String statement = "UPDATE chess_games SET game_json = ?, observers_json = ? WHERE game_id = ?";
-        try { DatabaseManager.executeUpdate(statement, new Gson().toJson(data.game()), new Gson().toJson(data.observers()), data.gameID()); }
+//        try { DatabaseManager.executeUpdate(statement, new Gson().toJson(data.game()), new Gson().toJson(data.observers()), data.gameID()); }
+        try {
+            ChessGame game = data.game();
+            ObservingUsers observingUsers = data.observers();
+            var gameData = new Gson().toJson(game);
+            var observers = new Gson().toJson(observingUsers);
+            var id = data.gameID();
+            DatabaseManager.executeUpdate(statement, gameData, observers, id);
+        }
         catch (DataAccessException ignored) {}
+        catch (Throwable thrown) {
+            System.out.println("couldn't write to database");
+            System.err.println(thrown.getMessage());
+        }
     }
 }

@@ -31,13 +31,14 @@ public class ConnectionManager {
 //                    case LOAD_GAME -> new LoadGameMessage();
 //                    case ERROR -> new ErrorMessage(auth, message);
 //                }
-                msg.setAuth(auth);
+                msg.setAuthToken(auth);
                 send(session, msg);
             }
             else { sessions.remove(auth); }
         }
     }
     public void sendError(Session session, ErrorMessage msg) { if (session.isOpen()) send(session, msg); }
+    public void sendSingleMessage(int id, String auth, ServerMessage msg) { send(connections.get(id).get(auth), msg); }
     public void send(Session session, ServerMessage msg) {
         try { session.getRemote().sendString(new Gson().toJson(msg)); }
         catch (IOException e) { throw new RuntimeException(e); }

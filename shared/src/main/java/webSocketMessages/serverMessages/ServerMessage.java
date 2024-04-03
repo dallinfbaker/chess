@@ -8,29 +8,29 @@ import java.util.Objects;
  * methods.
  */
 public class ServerMessage {
-    private final MessageType serverMessageType;
-    private String auth;
+    private final ServerMessageType serverMessageType;
+    private String authToken;
 //    private final String message;
 
-    public enum MessageType {
+    public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
         NOTIFICATION
     }
 
-    public ServerMessage(MessageType type) { serverMessageType = type; }
+    public ServerMessage(ServerMessageType type) { serverMessageType = type; }
 
-    public MessageType getServerMessageType() { return serverMessageType; }
-    public void setAuth(String authToke) { auth = authToke; }
-    public String getAuth() { return auth; }
+    public ServerMessageType getServerMessageType() { return serverMessageType; }
+    public void setAuthToken(String authToken) { this.authToken = authToken; }
+    public String getAuthToken() { return authToken; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ServerMessage that)) return false;
-        return getServerMessageType() == that.getServerMessageType() && Objects.equals(auth, that.getAuth());
+        return getServerMessageType() == that.getServerMessageType() && Objects.equals(authToken, that.getAuthToken());
     }
 
     @Override
-    public int hashCode() { return Objects.hash(getServerMessageType(), auth); }
+    public int hashCode() { return Objects.hash(getServerMessageType(), authToken); }
 }

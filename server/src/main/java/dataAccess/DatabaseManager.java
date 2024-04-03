@@ -32,9 +32,7 @@ public class DatabaseManager {
                 var port = Integer.parseInt(props.getProperty("db.port"));
                 connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
             }
-        } catch (Exception ex) {
-            throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
-        }
+        } catch (Exception ex) { throw new RuntimeException("unable to process db.properties. " + ex.getMessage()); }
     }
 
     /**
@@ -46,17 +44,15 @@ public class DatabaseManager {
             try {
                 var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
                 var conn = DriverManager.getConnection(connectionUrl, user, password);
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+                try (var preparedStatement = conn.prepareStatement(statement))
+                { preparedStatement.executeUpdate(); }
                 conn = getConnection();
                 statement = "CREATE TABLE IF NOT EXISTS auth_tokens (" +
                         "    token VARCHAR(50) PRIMARY KEY," +
                         "    username VARCHAR(50) NOT NULL" +
                         ");";
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+                try (var preparedStatement = conn.prepareStatement(statement))
+                { preparedStatement.executeUpdate(); }
                 statement = "CREATE TABLE IF NOT EXISTS chess_games (" +
                         "    game_id int PRIMARY KEY," +
                         "    white_player_username VARCHAR(50)," +
@@ -65,20 +61,17 @@ public class DatabaseManager {
                         "    game_json json NOT NULL," +
                         "    observers_json json" +
                         ");";
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+                try (var preparedStatement = conn.prepareStatement(statement))
+                { preparedStatement.executeUpdate(); }
                 statement = "CREATE TABLE IF NOT EXISTS users (" +
                         "    username VARCHAR(50) PRIMARY KEY," +
                         "    email VARCHAR(100) NOT NULL," +
                         "    password VARCHAR(100) NOT NULL" +
                         ");";
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            } catch (SQLException e) {
-                throw new DataAccessException(e.getMessage());
-            }
+                try (var preparedStatement = conn.prepareStatement(statement))
+                { preparedStatement.executeUpdate(); }
+                conn.commit();
+            } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
         }
     }
 
@@ -98,6 +91,7 @@ public class DatabaseManager {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
+            conn.setAutoCommit(false);
             return conn;
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
@@ -105,9 +99,9 @@ public class DatabaseManager {
     static public void executeUpdate(String statement, Object... params) throws DataAccessException {
         if (isInvalidSQLStatement(statement)) throw new DataAccessException("invalid sql command");
         try (var conn = getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                prepareStatement(ps, params).executeUpdate();
-            }
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS))
+            { prepareStatement(ps, params).executeUpdate(); }
+            conn.commit();
         } catch (SQLException e) { throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage())); }
     }
 
@@ -117,7 +111,7 @@ public class DatabaseManager {
         try (var conn = getConnection()) {
             PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
             ResultSet rs = prepareStatement(ps, params).executeQuery();
-            while (rs.next()) {list.add(builder.apply(rs)); }
+            while (rs.next()) { list.add(builder.apply(rs)); }
             return list;
         } catch (SQLException e) { throw new DataAccessException(e.getMessage()); }
     }
@@ -137,9 +131,8 @@ public class DatabaseManager {
 
     private static boolean isInvalidSQLStatement(String statement) {
         String[] allowedKeywords = {"SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "TRUNCATE"};
-        for (String keyword : allowedKeywords) {
-            if (statement.toUpperCase().contains(keyword)) { return false; }
-        }
+        for (String keyword : allowedKeywords)
+        { if (statement.toUpperCase().contains(keyword)) { return false; } }
         return true;
     }
 }

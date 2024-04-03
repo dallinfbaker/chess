@@ -3,11 +3,11 @@ package webSocketMessages.serverMessages;
 import model.GameDataRecord;
 
 public class LoadGameMessage extends ServerMessage {
-    private final GameDataRecord gameData;
-    public LoadGameMessage(GameDataRecord game) {
-        super(MessageType.LOAD_GAME);
-        gameData = game;
+    private final GameDataRecord game;
+    public LoadGameMessage(GameDataRecord gameData) {
+        super(ServerMessageType.LOAD_GAME);
+        this.game = gameData;
     }
 
-    public GameDataRecord getGameData() { return gameData; }
+    public GameDataRecord getGame() { return game; }
 }

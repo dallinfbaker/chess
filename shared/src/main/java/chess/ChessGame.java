@@ -14,6 +14,7 @@ public class ChessGame {
     private TeamColor turnColor;
     private Map<TeamColor, Integer> pieceCounter;
     private ChessPiece enPassantVulnerable = null;
+    private boolean finished;
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
@@ -21,6 +22,7 @@ public class ChessGame {
         pieceCounter = new HashMap<>();
         pieceCounter.put(TeamColor.WHITE, 16);
         pieceCounter.put(TeamColor.BLACK, 16);
+        finished = false;
     }
 
     /**
@@ -40,7 +42,8 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK,
+        STALEMATE
     }
 
     /**
@@ -149,6 +152,7 @@ public class ChessGame {
         if (king == null) return false;
         boolean isMate = isCheckPosition(king.getPosition(), king.getTeamColor());
         isMate = validMoves(king.getPosition()).isEmpty() && isMate;
+        finished = isMate;
         return isMate;
     }
 
@@ -169,6 +173,7 @@ public class ChessGame {
             cur = move.getEndPosition();
             isStalemate = isCheckPosition(cur, king.getTeamColor());
         }
+        finished = isStalemate;
         return isStalemate;
     }
 
@@ -185,7 +190,11 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() { return this.board; }
-
+    public boolean getFinished() { return finished; }
+    public void resign(TeamColor color) {
+        turnColor = Objects.equals(color, TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        finished = true;
+    }
     @Override
     public String toString() {
         return "ChessGame{" +

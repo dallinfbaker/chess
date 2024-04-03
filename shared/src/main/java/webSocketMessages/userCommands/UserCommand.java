@@ -10,13 +10,13 @@ import java.util.Objects;
  * methods.
  */
 public class UserCommand {
-    protected CommandType type;
-    private final AuthDataRecord authToken;
-    private final int gameId;
+    protected CommandType commandType;
+    private final String authToken;
+    private final Integer gameID;
 
-    public UserCommand(AuthDataRecord token, int id) {
+    public UserCommand(String token, int id) {
         authToken = token;
-        gameId = id;
+        gameID = id;
     }
 
     public enum CommandType {
@@ -29,10 +29,10 @@ public class UserCommand {
 
 
 
-    public AuthDataRecord getAuth() { return authToken; }
+    public String getAuth() { return authToken; }
 
-    public CommandType getType() { return type; }
-    public int getGameId() { return  gameId; }
+    public CommandType getCommandType() { return commandType; }
+    public int getGameID() { return gameID; }
 
 
 
@@ -42,11 +42,11 @@ public class UserCommand {
             return true;
         if (!(o instanceof UserCommand that))
             return false;
-        return getType() == that.getType() && Objects.equals(getAuth(), that.getAuth());
+        return getCommandType() == that.getCommandType() && Objects.equals(getAuth(), that.getAuth());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getType(), getAuth());
+        return Objects.hash(getCommandType(), getAuth());
     }
 }
