@@ -99,6 +99,7 @@ public class WebSocketHandler {
         GameDataRecord postMove = gameService.makeMove(id, move, username);
         sendNotification(id, auth, String.format("%s made a move", username));
         sendLoadGame(id, postMove);
+        if (postMove.game().getFinished()) sendNotification(id, null, String.format("%s ended the game", username));
     }
 
 }

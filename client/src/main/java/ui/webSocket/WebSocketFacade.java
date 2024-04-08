@@ -53,11 +53,10 @@ public class WebSocketFacade extends Endpoint {
         catch (IOException ignored) { throw new ResponseException(500, "Error: unable to send message"); }
     }
 
-    public void leaveGame(GameDataRecord data, String auth) throws ResponseException { sendMessage(new LeaveCommand(auth, data.gameID()/*, color*/)); }
+    public void leaveGame(GameDataRecord data, String auth) throws ResponseException { sendMessage(new LeaveCommand(auth, data.gameID())); }
     public void makeMove(GameDataRecord data, String auth, ChessMove move) throws ResponseException { sendMessage(new MakeMoveCommand(auth, data.gameID(), color, move)); }
     public void resignGame(int id, String auth) throws ResponseException { sendMessage(new ResignCommand(auth, id, color)); }
     public void joinGame(GameDataRecord data, String auth, String username) throws ResponseException {
-//        userService.getUser(auth);
         color = Objects.equals(username, data.whiteUsername()) ? "white" : Objects.equals(username, data.blackUsername()) ? "black" : null;
         UserCommand msg;
         if (Objects.isNull(color)) msg = new JoinObserverCommand(auth, data.gameID());

@@ -86,7 +86,6 @@ public class GameDAODB implements GameDAOInterface {
     @Override
     public void updateGame(GameDataRecord data) {
         String statement = "UPDATE chess_games SET game_json = ?, observers_json = ? WHERE game_id = ?";
-//        try { DatabaseManager.executeUpdate(statement, new Gson().toJson(data.game()), new Gson().toJson(data.observers()), data.gameID()); }
         try {
             ChessGame game = data.game();
             ObservingUsers observingUsers = data.observers();

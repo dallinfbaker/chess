@@ -83,6 +83,8 @@ public class ChessGame {
                     Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2)
             { enPassantVulnerable.setEnPassantVulnerable(true); }
             else { enPassantVulnerable = null; }
+
+            isInCheckmate(this.turnColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
         }
         else throw new InvalidMoveException();
         this.setTeamTurn(this.turnColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
@@ -153,6 +155,7 @@ public class ChessGame {
         boolean isMate = isCheckPosition(king.getPosition(), king.getTeamColor());
         isMate = validMoves(king.getPosition()).isEmpty() && isMate;
         finished = isMate;
+        if (finished) this.setTeamTurn(teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
         return isMate;
     }
 
@@ -174,6 +177,7 @@ public class ChessGame {
             isStalemate = isCheckPosition(cur, king.getTeamColor());
         }
         finished = isStalemate;
+        if (finished) this.setTeamTurn(TeamColor.STALEMATE);
         return isStalemate;
     }
 

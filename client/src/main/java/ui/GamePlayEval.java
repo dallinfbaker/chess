@@ -96,6 +96,7 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
         if (!Objects.equals(game.game().getTeamTurn(), color)) return "illegal move: it isn't your turn";
         if (!Objects.equals(game.game().getBoard().getPiece(start).getTeamColor(), color)) return "illegal move: that isn't your piece";
         if (!isLegalMove(move)) return "illegal move: you can't move there";
+        if (game.game().getFinished()) return "you cannot move after the game is over";
         webSocket.makeMove(game, authToken, move);
         try { game.game().makeMove(move); } catch (InvalidMoveException ignored) {}
         moves = new HashSet<>();
@@ -133,7 +134,6 @@ public class GamePlayEval extends EvalLoop implements ServerMessageHandler {
     public void loadGame(LoadGameMessage message) {
         moves = new HashSet<>();
         game = message.getGame();
-//        System.out.printf("\n%s%s%s\n", SET_TEXT_COLOR_BLUE, message.getMessage(), SET_TEXT_COLOR_WHITE);
         System.out.printf(redrawBoard());
         System.out.printf("%n>>> ");
     }
