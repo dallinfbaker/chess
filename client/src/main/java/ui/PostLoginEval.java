@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PostLoginEval extends EvalLoop {
-    private int gameId;
     private Map<Integer, GameDataRecord> gameList = new HashMap<>();
     private boolean reverse = true;
     private GameDataRecord game;
